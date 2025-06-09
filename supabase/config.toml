@@ -1,0 +1,8 @@
+
+project_id = "pngtjdnoyrrgtuyvomte"
+
+[functions.ai-chat]
+verify_jwt = true
+
+[functions.polar-webhook]
+verify_jwt = false

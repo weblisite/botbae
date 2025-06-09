@@ -1,0 +1,101 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 33% 15%;
+    --foreground: 210 40% 98%;
+
+    --card: 240 33% 15%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 240 33% 15%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 349 89% 70%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 260 67% 70%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 20%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 260 67% 70%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-botbae-background text-foreground font-poppins;
+    background-image: linear-gradient(to bottom right, #1a1a2e, #16213e);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-montserrat;
+  }
+}
+
+/* Custom components */
+@layer components {
+  .botbae-container {
+    @apply container max-w-7xl mx-auto px-4 md:px-8;
+  }
+
+  .botbae-card {
+    @apply bg-gradient-to-br from-muted to-card rounded-lg shadow-lg p-6 backdrop-blur-sm border border-muted;
+  }
+
+  .botbae-button {
+    @apply bg-gradient-to-r from-botbae-accent to-botbae-secondary hover:opacity-90 text-white font-medium py-2.5 px-5 rounded-lg shadow-md transition-all duration-300 focus:ring-2 focus:ring-botbae-accent focus:ring-opacity-50 focus:outline-none;
+  }
+
+  .botbae-input {
+    @apply bg-muted border border-border rounded-lg px-4 py-2.5 w-full focus:ring-2 focus:ring-botbae-accent focus:outline-none text-foreground placeholder:text-muted-foreground;
+  }
+
+  .botbae-glass {
+    @apply bg-card/70 backdrop-blur-sm border border-muted rounded-lg;
+  }
+}
+
+/* Message bubbles */
+.message-bubble {
+  @apply rounded-2xl p-4 max-w-[80%] break-words animate-fade-in;
+}
+
+.user-message {
+  @apply message-bubble bg-botbae-accent text-white ml-auto;
+}
+
+.bot-message {
+  @apply message-bubble bg-muted text-foreground mr-auto;
+}
