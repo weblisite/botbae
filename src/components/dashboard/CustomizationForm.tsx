@@ -61,9 +61,8 @@ export function CustomizationForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <h2 className="text-xl font-bold mb-4">Customize Your Botbae</h2>
-        <p className="text-muted-foreground mb-6">
+      <div className="mb-6">
+        <p className="text-muted-foreground">
           Personalize your AI companion's appearance and personality to match your preferences
         </p>
       </div>
