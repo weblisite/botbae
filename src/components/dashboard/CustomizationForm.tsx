@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +24,7 @@ interface BotbaeConfig {
     intellect: number;
     confidence: number;
     creativity: number;
+    adventurousness: number;
   };
 }
 
@@ -274,6 +274,25 @@ export function CustomizationForm({
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>Practical</span>
                 <span>Creative</span>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <Label htmlFor="adventurousness">Adventurousness</Label>
+                <span className="text-sm">{localConfig.personality.adventurousness}%</span>
+              </div>
+              <Slider
+                id="adventurousness"
+                min={0}
+                max={100}
+                step={5}
+                value={[localConfig.personality.adventurousness]}
+                onValueChange={([value]) => updatePersonality("adventurousness", value)}
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Conservative</span>
+                <span>Adventurous</span>
               </div>
             </div>
           </div>

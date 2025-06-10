@@ -27,6 +27,7 @@ interface BotbaeConfig {
     intellect: number;
     confidence: number;
     creativity: number;
+    adventurousness: number;
   };
 }
 

@@ -38,6 +38,7 @@ interface BotbaeConfig {
     intellect: number;
     confidence: number;
     creativity: number;
+    adventurousness: number;
   };
 }
 
@@ -69,6 +70,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
       intellect: 75,
       confidence: 65,
       creativity: 80,
+      adventurousness: 75,
     },
   });
 
