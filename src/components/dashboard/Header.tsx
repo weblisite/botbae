@@ -1,4 +1,3 @@
-
 import { Menu, Bell, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,18 +23,17 @@ export function DashboardHeader({
   relationshipStage,
 }: HeaderProps) {
   return (
-    <header className="h-16 border-b border-muted flex items-center px-4 justify-between">
+    <header className="h-16 border-b border-muted flex items-center px-4 justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex items-center gap-4">
-        {isMobile && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowSidebar(!showSidebar)}
-            aria-label="Toggle menu"
-          >
-            <Menu />
-          </Button>
-        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setShowSidebar(!showSidebar)}
+          aria-label="Toggle menu"
+          className="hover:bg-botbae-accent/20 transition-colors border-2 border-transparent hover:border-botbae-accent/30"
+        >
+          <Menu size={24} className="text-foreground" />
+        </Button>
         
         <div className="flex flex-col">
           <h1 className="font-medium text-lg">Dashboard</h1>

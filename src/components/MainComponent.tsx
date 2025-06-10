@@ -331,15 +331,6 @@ function MainComponent() {
                   relationshipProgress={relationshipProgress}
                   onCustomizeClick={() => setCustomizeView(true)}
                   onDeepenBond={handleDeepenBond}
-                  conversationSuggestions={getConversationSuggestions()}
-                  onSuggestionClick={(suggestion) => {
-                    // Auto-fill the chat input with the suggestion
-                    const chatInput = document.querySelector('input[placeholder*="Message"]') as HTMLInputElement;
-                    if (chatInput) {
-                      chatInput.value = suggestion;
-                      chatInput.focus();
-                    }
-                  }}
                 />
                 
                 {/* Milestones Display */}
