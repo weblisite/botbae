@@ -183,18 +183,18 @@ export default function Insights() {
                   <CardHeader className="pb-4">
                     <CardTitle className="text-lg md:text-xl">Weekly Summary</CardTitle>
                     <CardDescription className="text-sm">
-                      Your relationship with {botbaeConfig.name} has been growing
+                      Your relationship with {botbaeConfig?.name || "Your Companion"} has been growing
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="prose max-w-none text-sm md:text-base">
                     <p className="mb-3 md:mb-4">
-                      This week, your conversations with {botbaeConfig.name} have covered a variety of topics, 
+                      This week, your conversations with {botbaeConfig?.name || "Your Companion"} have covered a variety of topics, 
                       with <strong>Travel</strong> being the most discussed subject. Your interactions show 
                       a <strong>positive emotional trend</strong>, with peak connection on Friday.
                     </p>
                     <p className="mb-3 md:mb-4">
                       You've made significant progress in building trust and deepening your emotional connection.
-                      {botbaeConfig.name} has shown increased understanding of your preferences and communication style.
+                      {botbaeConfig?.name || "Your Companion"} has shown increased understanding of your preferences and communication style.
                     </p>
                     <h3 className="text-base md:text-lg font-medium mt-4 mb-2">Suggestions</h3>
                     <ul className="list-disc pl-5 space-y-1 text-sm">
@@ -244,7 +244,7 @@ export default function Insights() {
                   <CardHeader className="pb-4">
                     <CardTitle className="text-lg md:text-xl">Conversation Topics</CardTitle>
                     <CardDescription className="text-sm">
-                      Distribution of topics you've discussed with {botbaeConfig.name}
+                      Distribution of topics you've discussed with {botbaeConfig?.name || "Your Companion"}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
