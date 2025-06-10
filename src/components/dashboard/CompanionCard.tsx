@@ -181,7 +181,12 @@ export function CompanionCard({
       
       {/* Relationship status */}
       <div className="mt-6 pt-4 border-t border-muted">
-        <div className="flex justify-center mb-4">
+        <div className="text-center mb-4">
+          <p className="text-sm text-muted-foreground">Relationship</p>
+          <p className="font-medium">{relationshipStage}</p>
+        </div>
+        
+        <div className="flex justify-center mb-2">
           <Button 
             className="botbae-button"
             onClick={onDeepenBond}
@@ -193,10 +198,6 @@ export function CompanionCard({
           </Button>
         </div>
         
-        <div className="text-center mb-2">
-          <p className="text-sm text-muted-foreground">Relationship</p>
-          <p className="font-medium">{relationshipStage}</p>
-        </div>
         <Progress value={relationshipProgress} className="h-2" />
       </div>
     </div>
