@@ -24,7 +24,7 @@ interface BotbaeConfig {
     intellect: number;
     confidence: number;
     creativity: number;
-    adventurousness: number;
+    curiosity: number;
   };
 }
 
@@ -279,20 +279,20 @@ export function CustomizationForm({
             
             <div className="space-y-2">
               <div className="flex justify-between">
-                <Label htmlFor="adventurousness">Adventurousness</Label>
-                <span className="text-sm">{localConfig.personality.adventurousness}%</span>
+                <Label htmlFor="curiosity">Curiosity</Label>
+                <span className="text-sm">{localConfig.personality.curiosity}%</span>
               </div>
               <Slider
-                id="adventurousness"
+                id="curiosity"
                 min={0}
                 max={100}
                 step={5}
-                value={[localConfig.personality.adventurousness]}
-                onValueChange={([value]) => updatePersonality("adventurousness", value)}
+                value={[localConfig.personality.curiosity]}
+                onValueChange={([value]) => updatePersonality("curiosity", value)}
               />
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Conservative</span>
-                <span>Adventurous</span>
+                <span>Content</span>
+                <span>Curious</span>
               </div>
             </div>
           </div>

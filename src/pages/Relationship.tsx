@@ -139,64 +139,64 @@ export default function Relationship() {
               </TabsList>
               
               <TabsContent value="progress">
-                <Card className="mb-6">
-                  <CardHeader className="pb-2">
-                    <CardTitle>Current Relationship Status</CardTitle>
-                    <CardDescription>Your relationship with {botbaeConfig.name}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center gap-2 mb-4">
-                      <Heart className="text-red-500" />
-                      <h3 className="text-xl font-semibold">{userMemory.relationshipStage}</h3>
-                    </div>
-                    
-                    <div className="mb-6">
-                      <div className="flex justify-between mb-2">
-                        <span>Progress to next level</span>
-                        <span>{relationshipProgress}%</span>
-                      </div>
-                      <Progress value={relationshipProgress} className="h-2" />
-                    </div>
-                    
-                    <div className="grid grid-cols-7 gap-1 mb-6 relative">
-                      {relationshipStages.map((stage, index) => (
-                        <div 
-                          key={stage} 
-                          className={`flex flex-col items-center ${index === currentStageIndex ? 'text-botbae-accent' : 'text-muted-foreground'}`}
-                        >
-                          <div 
-                            className={`w-4 h-4 rounded-full mb-1 ${
-                              index <= currentStageIndex ? 'bg-botbae-accent' : 'bg-muted'
-                            }`} 
-                          />
-                          <span className={`text-[0.65rem] text-center ${index === currentStageIndex ? 'font-semibold' : ''}`}>
-                            {stage}
-                          </span>
-                        </div>
-                      ))}
-                      
-                      {/* Progress line */}
-                      <div className="absolute top-2 left-0 h-[2px] bg-muted w-full -z-10" />
-                      <div 
-                        className="absolute top-2 left-0 h-[2px] bg-botbae-accent -z-10" 
-                        style={{ width: `${(currentStageIndex / (relationshipStages.length - 1)) * 100}%` }} 
-                      />
-                    </div>
-                    
-                    <Button 
-                      onClick={handleDeepenBond}
-                      disabled={relationshipProgress < 100 || currentStageIndex === relationshipStages.length - 1}
-                      className="w-full"
+            <Card className="mb-6">
+              <CardHeader className="pb-2">
+                <CardTitle>Current Relationship Status</CardTitle>
+                <CardDescription>Your relationship with {botbaeConfig.name}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-2 mb-4">
+                  <Heart className="text-red-500" />
+                  <h3 className="text-xl font-semibold">{userMemory.relationshipStage}</h3>
+                </div>
+                
+                <div className="mb-6">
+                  <div className="flex justify-between mb-2">
+                    <span>Progress to next level</span>
+                    <span>{relationshipProgress}%</span>
+                  </div>
+                  <Progress value={relationshipProgress} className="h-2" />
+                </div>
+                
+                <div className="grid grid-cols-7 gap-1 mb-6 relative">
+                  {relationshipStages.map((stage, index) => (
+                    <div 
+                      key={stage} 
+                      className={`flex flex-col items-center ${index === currentStageIndex ? 'text-botbae-accent' : 'text-muted-foreground'}`}
                     >
-                      {relationshipProgress < 100 
-                        ? `Continue chatting (${relationshipProgress}% progress)` 
-                        : currentStageIndex === relationshipStages.length - 1
-                          ? "Maximum relationship level reached"
-                          : `Deepen bond to ${relationshipStages[currentStageIndex + 1]}`
-                      }
-                    </Button>
-                  </CardContent>
-                </Card>
+                      <div 
+                        className={`w-4 h-4 rounded-full mb-1 ${
+                          index <= currentStageIndex ? 'bg-botbae-accent' : 'bg-muted'
+                        }`} 
+                      />
+                      <span className={`text-[0.65rem] text-center ${index === currentStageIndex ? 'font-semibold' : ''}`}>
+                        {stage}
+                      </span>
+                    </div>
+                  ))}
+                  
+                  {/* Progress line */}
+                  <div className="absolute top-2 left-0 h-[2px] bg-muted w-full -z-10" />
+                  <div 
+                    className="absolute top-2 left-0 h-[2px] bg-botbae-accent -z-10" 
+                    style={{ width: `${(currentStageIndex / (relationshipStages.length - 1)) * 100}%` }} 
+                  />
+                </div>
+                
+                <Button 
+                  onClick={handleDeepenBond}
+                  disabled={relationshipProgress < 100 || currentStageIndex === relationshipStages.length - 1}
+                  className="w-full"
+                >
+                  {relationshipProgress < 100 
+                    ? `Continue chatting (${relationshipProgress}% progress)` 
+                    : currentStageIndex === relationshipStages.length - 1
+                      ? "Maximum relationship level reached"
+                      : `Deepen bond to ${relationshipStages[currentStageIndex + 1]}`
+                  }
+                </Button>
+              </CardContent>
+            </Card>
               </TabsContent>
               
               <TabsContent value="milestones">

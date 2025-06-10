@@ -27,7 +27,7 @@ interface BotbaeConfig {
     intellect: number;
     confidence: number;
     creativity: number;
-    adventurousness: number;
+    curiosity: number;
   };
 }
 
@@ -164,6 +164,10 @@ export function CompanionCard({
             <div>
               <p className="text-sm text-muted-foreground">Creativity</p>
               <Progress value={botbaeConfig.personality.creativity} className="h-2" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Curiosity</p>
+              <Progress value={botbaeConfig.personality.curiosity} className="h-2" />
             </div>
           </div>
         </div>

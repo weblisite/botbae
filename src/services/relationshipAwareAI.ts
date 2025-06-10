@@ -288,8 +288,8 @@ ${conversationGuidelines}
     if (personality.creativity > 70) traits.push("very creative and imaginative");
     else if (personality.creativity > 40) traits.push("creative and artistic");
     
-    if (personality.adventurousness > 70) traits.push("highly adventurous and spontaneous");
-    else if (personality.adventurousness > 40) traits.push("open to new experiences");
+    if (personality.curiosity > 70) traits.push("extremely curious and inquisitive");
+    else if (personality.curiosity > 40) traits.push("naturally curious and interested in learning");
 
     return `You are ${traits.join(", ")}. These core traits influence how you interact, but they adapt and evolve based on your relationship stage.`;
   }

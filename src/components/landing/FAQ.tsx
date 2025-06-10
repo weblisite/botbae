@@ -20,7 +20,7 @@ const faqItems = [
   },
   {
     question: "Can I customize my Botbae?",
-    answer: "Yes, you can customize your Botbae's appearance (gender, name, ethnicity, style, body type, hair type) and personality traits (humor, empathy, intellect, confidence, creativity) to create your ideal companion."
+    answer: "Yes, you can customize your Botbae's appearance (gender, name, ethnicity, style, body type, hair type) and personality traits (humor, empathy, intellect, confidence, creativity, curiosity) to create your ideal companion."
   },
   {
     question: "Is my data private and secure?",

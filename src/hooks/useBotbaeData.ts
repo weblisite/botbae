@@ -24,7 +24,7 @@ export interface BotbaeConfig {
     intellect: number;
     confidence: number;
     creativity: number;
-    adventurousness: number;
+    curiosity: number;
   };
 }
 
@@ -64,7 +64,7 @@ const mockBotbaeConfig: BotbaeConfig = {
     intellect: 75,
     confidence: 65,
     creativity: 80,
-    adventurousness: 70
+    curiosity: 70
   }
 };
 
@@ -116,8 +116,8 @@ export function useBotbaeData() {
   const calculatePersonalityCompatibility = (botbaeConfig: BotbaeConfig): number => {
     // Simple compatibility calculation based on personality traits
     // In a real implementation, this could be more sophisticated
-    const { humor, empathy, intellect, confidence, creativity, adventurousness } = botbaeConfig.personality;
-    const avgPersonality = (humor + empathy + intellect + confidence + creativity + adventurousness) / 6;
+    const { humor, empathy, intellect, confidence, creativity, curiosity } = botbaeConfig.personality;
+    const avgPersonality = (humor + empathy + intellect + confidence + creativity + curiosity) / 6;
     return Math.round(avgPersonality * 0.8); // Convert to compatibility score
   };
 
@@ -296,7 +296,7 @@ export function useBotbaeData() {
               intellect: number;
               confidence: number;
               creativity: number;
-              adventurousness: number;
+              curiosity: number;
             },
           });
         }
