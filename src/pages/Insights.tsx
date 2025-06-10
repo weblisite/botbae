@@ -100,31 +100,6 @@ export default function Insights() {
     fetchInsights();
   }, [user]);
 
-  // Show loading state if userMemory or botbaeConfig is not loaded yet
-  if (!userMemory || !botbaeConfig) {
-    return (
-      <div className="flex h-screen overflow-hidden">
-        {/* Sidebar */}
-        <DashboardSidebar
-          isMobile={isMobile}
-          showSidebar={showSidebar}
-          setShowSidebar={setShowSidebar}
-          onSignOut={async () => {}}
-        />
-        
-        {/* Main content */}
-        <div className="flex-1 flex flex-col h-screen overflow-hidden">
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading insights...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -141,7 +116,7 @@ export default function Insights() {
           isMobile={isMobile}
           showSidebar={showSidebar}
           setShowSidebar={setShowSidebar}
-          relationshipStage={userMemory.relationshipStage}
+          relationshipStage={userMemory?.relationshipStage || "getting_to_know"}
         />
         
         <div className="flex-1 overflow-y-auto p-4 md:p-6">

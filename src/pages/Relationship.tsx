@@ -72,7 +72,7 @@ export default function Relationship() {
   }, [userMemory, botbaeConfig]);
 
   // Handle progression to next relationship stage
-  const handleDeepenBond = () => {
+  const handleDeepenBond = async () => {
     if (!userMemory) return;
     
     if (relationshipProgress < 100) {
@@ -88,26 +88,10 @@ export default function Relationship() {
       return;
     }
     
-    // For romantic stages, require consent
-    if (nextStage === "Romantic Interest" || nextStage === "Dating" || 
-        nextStage === "Committed Partner" || nextStage === "Soulmate") {
-      setNextRelationshipStage(nextStage);
-      setShowConsentDialog(true);
-    } else {
-      updateRelationshipStage(nextStage);
-    }
+    // For now, just show a coming soon message
+    // TODO: Implement actual relationship stage progression
+    console.log(`Would progress to ${nextStage}`);
   };
-
-  // Show minimal loading only if data is missing
-  if (!userMemory || !botbaeConfig) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-[#1a1a2e] to-[#16213e]">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-white">Loading relationship data...</h2>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -116,7 +100,7 @@ export default function Relationship() {
         isMobile={isMobile}
         showSidebar={showSidebar}
         setShowSidebar={setShowSidebar}
-        onSignOut={() => {}}
+        onSignOut={async () => {}}
       />
       
       {/* Main content */}
@@ -125,12 +109,12 @@ export default function Relationship() {
           isMobile={isMobile}
           showSidebar={showSidebar}
           setShowSidebar={setShowSidebar}
-          relationshipStage={userMemory.relationshipStage}
+          relationshipStage={userMemory?.relationshipStage || "getting_to_know"}
         />
         
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-6xl mx-auto">
-            <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 px-1">Relationship Progress</h1>
+            <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 px-1">Relationship with {botbaeConfig?.name || "Your Companion"}</h1>
             
             <Tabs defaultValue="progress" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-4 md:mb-6">
@@ -142,12 +126,12 @@ export default function Relationship() {
             <Card className="mb-6">
               <CardHeader className="pb-2">
                 <CardTitle>Current Relationship Status</CardTitle>
-                <CardDescription>Your relationship with {botbaeConfig.name}</CardDescription>
+                <CardDescription>Your relationship with {botbaeConfig?.name || "Your Companion"}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2 mb-4">
                   <Heart className="text-red-500" />
-                  <h3 className="text-xl font-semibold">{userMemory.relationshipStage}</h3>
+                  <h3 className="text-xl font-semibold">{userMemory?.relationshipStage || "getting_to_know"}</h3>
                 </div>
                 
                 <div className="mb-6">
@@ -204,7 +188,7 @@ export default function Relationship() {
                   <CardHeader>
                     <CardTitle>Relationship Milestones</CardTitle>
                     <CardDescription>
-                      Important moments you've shared with {botbaeConfig.name}
+                      Important moments you've shared with {botbaeConfig?.name || "Your Companion"}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -262,7 +246,7 @@ export default function Relationship() {
                   <CardHeader>
                     <CardTitle>Relationship Activities</CardTitle>
                     <CardDescription>
-                      Special activities you can do with {botbaeConfig.name}
+                      Special activities you can do with {botbaeConfig?.name || "Your Companion"}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -344,7 +328,7 @@ export default function Relationship() {
                   <CardHeader>
                     <CardTitle>Compatibility Analysis</CardTitle>
                     <CardDescription>
-                      How well you and {botbaeConfig.name} match based on your interactions
+                      How well you and {botbaeConfig?.name || "Your Companion"} match based on your interactions
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -385,7 +369,7 @@ export default function Relationship() {
                     <div className="mt-8 p-4 bg-muted rounded-md">
                       <h3 className="text-lg font-medium mb-2">Compatibility Summary</h3>
                       <p className="text-muted-foreground">
-                        You and {botbaeConfig.name} have an exceptional communication style match, 
+                        You and {botbaeConfig?.name || "Your Companion"} have an exceptional communication style match, 
                         with strong alignment in values and shared interests. Your emotional 
                         connection continues to develop as you spend more time together.
                       </p>

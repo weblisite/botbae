@@ -81,18 +81,6 @@ export default function Activities() {
     }, 1000);
   };
 
-  // Show loading state
-  if (!userMemory || !botbaeConfig) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-[#1a1a2e] to-[#16213e]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-botbae-accent mx-auto"></div>
-          <h2 className="mt-4 text-xl font-semibold text-white">Loading activities...</h2>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -109,12 +97,12 @@ export default function Activities() {
           isMobile={isMobile}
           showSidebar={showSidebar}
           setShowSidebar={setShowSidebar}
-          relationshipStage={userMemory.relationshipStage}
+          relationshipStage={userMemory?.relationshipStage || "getting_to_know"}
         />
         
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-6xl mx-auto">
-            <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 px-1">Activities with {botbaeConfig.name}</h1>
+            <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 px-1">Activities with {botbaeConfig?.name || "Your Companion"}</h1>
             
             <Tabs defaultValue="calendar" className="w-full">
               <TabsList className="grid w-full grid-cols-3 mb-4 md:mb-6">
@@ -128,7 +116,7 @@ export default function Activities() {
                   <CardHeader className="pb-4">
                     <CardTitle className="text-lg md:text-xl">Activity Calendar</CardTitle>
                     <CardDescription className="text-sm">
-                      Schedule and manage your activities with {botbaeConfig.name}
+                      Schedule and manage your activities with {botbaeConfig?.name || "Your Companion"}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
@@ -261,7 +249,7 @@ export default function Activities() {
                   <CardHeader className="pb-4">
                     <CardTitle className="text-lg md:text-xl">Activity History</CardTitle>
                     <CardDescription className="text-sm">
-                      Past activities and experiences with {botbaeConfig.name}
+                      Past activities and experiences with {botbaeConfig?.name || "Your Companion"}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -291,7 +279,7 @@ export default function Activities() {
                               Two weeks ago
                             </p>
                             <p className="text-sm mt-2 line-clamp-2">
-                              You shared about your day and {botbaeConfig.name} offered supportive advice.
+                              You shared about your day and {botbaeConfig?.name || "Your Companion"} offered supportive advice.
                             </p>
                           </div>
                           <Button variant="outline" size="sm" className="w-full sm:w-auto flex-shrink-0">
@@ -314,7 +302,7 @@ export default function Activities() {
           <DialogHeader>
             <DialogTitle>Schedule an Activity</DialogTitle>
             <DialogDescription>
-              Schedule time with {botbaeConfig.name} for a special activity.
+              Schedule time with {botbaeConfig?.name || "Your Companion"} for a special activity.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
