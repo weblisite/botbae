@@ -101,47 +101,6 @@
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
   }
-
-  /* Mobile keyboard-safe positioning */
-  .keyboard-safe-header {
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 100;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-}
-
-/* Mobile viewport fixes */
-@supports (-webkit-touch-callout: none) {
-  /* iOS Safari specific fixes */
-  .ios-vh-fix {
-    height: -webkit-fill-available;
-  }
-}
-
-/* Handle mobile keyboard behavior */
-@media screen and (max-width: 768px) {
-  /* Prevent viewport scaling when keyboard appears */
-  .keyboard-active {
-    position: relative;
-  }
-  
-  .keyboard-active .sticky-header {
-    position: fixed !important;
-    top: env(safe-area-inset-top, 0);
-    left: 0;
-    right: 0;
-    width: 100%;
-  }
-  
-  /* Adjust content when keyboard is visible */
-  .keyboard-content-offset {
-    padding-top: 4rem; /* Account for fixed header height */
-  }
 }
 
 /* Message bubbles */

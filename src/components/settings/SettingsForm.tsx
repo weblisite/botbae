@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router-dom";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,8 +66,12 @@ const PLAN_CONFIGS = {
 
 export default function SettingsForm() {
   const { user } = useAuth();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<any>(null);
+
+  // Get default tab from navigation state
+  const defaultTab = location.state?.defaultTab || "profile";
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -182,7 +187,7 @@ export default function SettingsForm() {
   }
 
   return (
-    <Tabs defaultValue="profile">
+    <Tabs defaultValue={defaultTab}>
       <TabsList className="grid grid-cols-4 w-full mb-8">
         <TabsTrigger value="profile">Profile</TabsTrigger>
         <TabsTrigger value="subscription">Subscription</TabsTrigger>

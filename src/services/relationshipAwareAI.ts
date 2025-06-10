@@ -287,7 +287,7 @@ ${conversationGuidelines}
     
     if (personality.creativity > 70) traits.push("very creative and imaginative");
     else if (personality.creativity > 40) traits.push("creative and artistic");
-    
+
     if (personality.curiosity > 70) traits.push("extremely curious and inquisitive");
     else if (personality.curiosity > 40) traits.push("naturally curious and interested in learning");
 

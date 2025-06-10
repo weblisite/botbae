@@ -59,7 +59,6 @@ function MainComponent() {
   const [nextRelationshipStage, setNextRelationshipStage] = useState("");
   const [showMessageLimitModal, setShowMessageLimitModal] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
   
   // Check if user is premium
   useEffect(() => {
@@ -89,43 +88,6 @@ function MainComponent() {
     
     checkPremiumStatus();
   }, [user]);
-
-  // Mobile keyboard detection
-  useEffect(() => {
-    if (!isMobile) return;
-
-    const handleResize = () => {
-      const windowHeight = window.innerHeight;
-      const screenHeight = window.screen.height;
-      const threshold = screenHeight * 0.75;
-      setKeyboardVisible(windowHeight < threshold);
-    };
-
-    const handleFocusIn = () => {
-      setTimeout(() => {
-        const windowHeight = window.innerHeight;
-        const screenHeight = window.screen.height;
-        const threshold = screenHeight * 0.75;
-        setKeyboardVisible(windowHeight < threshold);
-      }, 300);
-    };
-
-    const handleFocusOut = () => {
-      setTimeout(() => {
-        setKeyboardVisible(false);
-      }, 300);
-    };
-
-    window.addEventListener('resize', handleResize);
-    document.addEventListener('focusin', handleFocusIn);
-    document.addEventListener('focusout', handleFocusOut);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      document.removeEventListener('focusin', handleFocusIn);
-      document.removeEventListener('focusout', handleFocusOut);
-    };
-  }, [isMobile]);
 
   // Handle sending a message
   const handleSendMessage = async (text: string) => {
@@ -305,12 +267,12 @@ function MainComponent() {
       />
       
       {/* Main content */}
-      <div className={`flex-1 flex flex-col min-h-screen ${keyboardVisible && isMobile ? 'pt-16' : ''}`}>
+      <div className="flex-1 flex flex-col min-h-screen">
         <DashboardHeader
           isMobile={isMobile}
           showSidebar={showSidebar}
           setShowSidebar={setShowSidebar}
-          relationshipStage={userMemory?.relationshipStage || "New Friend"}
+          relationshipStage={userMemory.relationshipStage}
         />
         
         {/* Message Counter for Free and Pro Users */}

@@ -1,6 +1,8 @@
 import { Menu, Bell, User } from "lucide-react";
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "@/components/ui/sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,69 +25,43 @@ export function DashboardHeader({
   setShowSidebar,
   relationshipStage,
 }: HeaderProps) {
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const navigate = useNavigate();
+  const { signOut, user } = useAuth();
 
-  useEffect(() => {
-    if (!isMobile) return;
+  const handleProfileClick = () => {
+    navigate("/dashboard/settings", { state: { defaultTab: "profile" } });
+  };
 
-    const handleResize = () => {
-      // Detect mobile keyboard by checking if the viewport height has significantly shrunk
-      const windowHeight = window.innerHeight;
-      const screenHeight = window.screen.height;
-      const threshold = screenHeight * 0.75; // If viewport is less than 75% of screen height, keyboard is likely visible
-      
-      setKeyboardVisible(windowHeight < threshold);
-    };
+  const handleSubscriptionClick = () => {
+    navigate("/dashboard/settings", { state: { defaultTab: "subscription" } });
+  };
 
-    const handleFocusIn = () => {
-      // Additional keyboard detection via input focus
-      setTimeout(() => {
-        const windowHeight = window.innerHeight;
-        const screenHeight = window.screen.height;
-        const threshold = screenHeight * 0.75;
-        setKeyboardVisible(windowHeight < threshold);
-      }, 300); // Delay to allow keyboard animation
-    };
+  const handleSettingsClick = () => {
+    navigate("/dashboard/settings");
+  };
 
-    const handleFocusOut = () => {
-      // Keyboard likely hidden when inputs lose focus
-      setTimeout(() => {
-        setKeyboardVisible(false);
-      }, 300);
-    };
+  const handleNotificationsClick = () => {
+    navigate("/dashboard/settings", { state: { defaultTab: "notifications" } });
+  };
 
-    // Listen for window resize (keyboard show/hide)
-    window.addEventListener('resize', handleResize);
-    
-    // Listen for input focus events
-    document.addEventListener('focusin', handleFocusIn);
-    document.addEventListener('focusout', handleFocusOut);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      document.removeEventListener('focusin', handleFocusIn);
-      document.removeEventListener('focusout', handleFocusOut);
-    };
-  }, [isMobile]);
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast.error("Failed to sign out. Please try again.");
+    }
+  };
 
   return (
     <header 
-      className={`
-        ${keyboardVisible && isMobile ? 'fixed' : 'sticky-header sticky'} 
-        top-0 z-[100] h-16 border-b border-muted flex items-center px-4 justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shrink-0
-        ${keyboardVisible && isMobile ? 'left-0 right-0' : ''}
-      `}
+      className="sticky-header sticky top-0 z-[100] h-16 border-b border-muted flex items-center px-4 justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shrink-0"
       style={{
-        position: keyboardVisible && isMobile ? 'fixed' : 'sticky',
+        position: 'sticky',
         top: 0,
         zIndex: 100,
         WebkitBackdropFilter: 'blur(8px)',
-        backdropFilter: 'blur(8px)',
-        ...(keyboardVisible && isMobile && {
-          left: 0,
-          right: 0,
-          width: '100%'
-        })
+        backdropFilter: 'blur(8px)'
       }}
     >
       <div className="flex items-center gap-4">
@@ -106,24 +82,45 @@ export function DashboardHeader({
       </div>
       
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" aria-label="Notifications">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          aria-label="Notifications"
+          onClick={handleNotificationsClick}
+          className="hover:bg-botbae-accent/20 transition-colors"
+        >
           <Bell size={20} />
         </Button>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full overflow-hidden">
+            <Button variant="ghost" size="icon" className="rounded-full overflow-hidden hover:bg-botbae-accent/20 transition-colors">
               <User size={20} />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">My Account</p>
+                <p className="text-xs leading-none text-muted-foreground">
+                  {user?.email}
+                </p>
+              </div>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleProfileClick} className="cursor-pointer">
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSubscriptionClick} className="cursor-pointer">
+              Subscription
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSettingsClick} className="cursor-pointer">
+              Settings
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Sign out</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive focus:text-destructive">
+              Sign out
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
