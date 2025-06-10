@@ -63,13 +63,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-        botbae: {
-          background: '#1a1a2e',
-          darkblue: '#16213e',
-          accent: '#ff6b6b',
-          secondary: '#9370DB',
-          light: '#f8f9fa'
-        }
+        'botbae-background': '#1a1a2e',
+        'botbae-darkblue': '#16213e',
+        'botbae-accent': '#ff6b6b',
+        'botbae-secondary': '#9370DB',
+        'botbae-light': '#f8f9fa'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
