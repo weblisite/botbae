@@ -323,6 +323,7 @@ function MainComponent() {
                     relationshipProgress={relationshipProgress}
                     onCustomizeClick={() => setCustomizeView(true)}
                     onDeepenBond={handleDeepenBond}
+                    hidePersonalityTraits={true}
                   />
                 )}
                 

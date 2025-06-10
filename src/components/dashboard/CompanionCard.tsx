@@ -37,6 +37,7 @@ interface CompanionCardProps {
   relationshipProgress: number;
   onCustomizeClick: () => void;
   onDeepenBond: () => void;
+  hidePersonalityTraits?: boolean;
 }
 
 export function CompanionCard({
@@ -45,6 +46,7 @@ export function CompanionCard({
   relationshipProgress,
   onCustomizeClick,
   onDeepenBond,
+  hidePersonalityTraits = false,
 }: CompanionCardProps) {
   // Get relationship color based on stage
   const getRelationshipColor = () => {
@@ -144,32 +146,34 @@ export function CompanionCard({
           </div>
           
           {/* Personality traits */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <div>
-              <p className="text-sm text-muted-foreground">Humor</p>
-              <Progress value={botbaeConfig.personality.humor} className="h-2" />
+          {!hidePersonalityTraits && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div>
+                <p className="text-sm text-muted-foreground">Humor</p>
+                <Progress value={botbaeConfig.personality.humor} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Empathy</p>
+                <Progress value={botbaeConfig.personality.empathy} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Intellect</p>
+                <Progress value={botbaeConfig.personality.intellect} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Confidence</p>
+                <Progress value={botbaeConfig.personality.confidence} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Creativity</p>
+                <Progress value={botbaeConfig.personality.creativity} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Curiosity</p>
+                <Progress value={botbaeConfig.personality.curiosity} className="h-2" />
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Empathy</p>
-              <Progress value={botbaeConfig.personality.empathy} className="h-2" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Intellect</p>
-              <Progress value={botbaeConfig.personality.intellect} className="h-2" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Confidence</p>
-              <Progress value={botbaeConfig.personality.confidence} className="h-2" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Creativity</p>
-              <Progress value={botbaeConfig.personality.creativity} className="h-2" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Curiosity</p>
-              <Progress value={botbaeConfig.personality.curiosity} className="h-2" />
-            </div>
-          </div>
+          )}
         </div>
       </div>
       
