@@ -101,22 +101,29 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
     setLoading(plan.id);
 
     try {
-      // Check if we're in development mode OR missing essential environment variables
-      const hasRequiredEnvVars = import.meta.env.VITE_POLAR_ACCESS_TOKEN && 
-                                  POLAR_PRODUCT_PRICES[plan.id as keyof typeof POLAR_PRODUCT_PRICES];
-      
-      const isDevelopmentMode = import.meta.env.DEV || !hasRequiredEnvVars;
-      
-      // For development OR when env vars are missing - use mock checkout with actual database updates
-      if (isDevelopmentMode) {
-        console.log('Using mock checkout mode:', { 
-          isDev: import.meta.env.DEV, 
-          hasEnvVars: hasRequiredEnvVars,
-          reason: !hasRequiredEnvVars ? 'Missing environment variables' : 'Development mode'
-        });
+      // Call Supabase Edge Function for secure checkout
+      const { data, error } = await supabase.functions.invoke('polar-checkout', {
+        body: {
+          planId: plan.id,
+          userId: user.id,
+          userEmail: user.email,
+          successUrl: `${window.location.origin}/dashboard/settings?success=true&plan=${plan.id}`,
+          cancelUrl: `${window.location.origin}/dashboard/settings?canceled=true`,
+        },
+      });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        throw new Error(`Function error: ${error.message}`);
+      }
+
+      // Check if we should fallback to demo mode
+      if (data?.demo || data?.error) {
+        console.log('Falling back to demo mode:', data.error || 'Payment system not configured');
         
+        // Use mock checkout with actual database update
         const mockCheckout = await createMockCheckout(plan.id, user.email || 'user@example.com');
-        toast.success(`Mock checkout created for ${plan.name}! This is a development/demo mode.`);
+        toast.success(`Demo checkout created for ${plan.name}! This is a development/demo mode.`);
         console.log('Mock Polar checkout:', mockCheckout);
         
         // Simulate successful subscription with actual database update
@@ -151,63 +158,20 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
             }
           } catch (error) {
             console.error('Error updating subscription:', error);
-            toast.error("Mock payment successful but failed to update your account.");
+            toast.error("Demo payment successful but failed to update your account.");
           }
         }, 2000);
         
         return;
       }
 
-      // Production Polar checkout
-      const productPriceId = POLAR_PRODUCT_PRICES[plan.id as keyof typeof POLAR_PRODUCT_PRICES];
-      
-      if (!productPriceId) {
-        console.error('Missing product price ID for plan:', plan.id, 'Available price IDs:', POLAR_PRODUCT_PRICES);
-        throw new Error(`No product price ID configured for plan: ${plan.id}. Please contact support.`);
+      // Real checkout URL received
+      if (data?.checkoutUrl) {
+        console.log('Redirecting to Polar checkout:', data.checkoutId);
+        window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error('No checkout URL received from payment service');
       }
-
-      if (!import.meta.env.VITE_POLAR_ACCESS_TOKEN) {
-        console.error('Missing Polar access token');
-        throw new Error('Payment system not configured. Please contact support.');
-      }
-
-      // Call Polar API directly (in production, this should be done server-side)
-      const checkoutData = {
-        product_price_id: productPriceId,
-        success_url: `${window.location.origin}/dashboard/settings?success=true&plan=${plan.id}`,
-        cancel_url: `${window.location.origin}/dashboard/settings?canceled=true`,
-        customer_email: user.email,
-        metadata: {
-          user_id: user.id,
-          plan_id: plan.id,
-        },
-      };
-
-      console.log('Creating Polar checkout with data:', { ...checkoutData, customer_email: '***' });
-
-      const response = await fetch('https://api.polar.sh/v1/checkouts/custom', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_POLAR_ACCESS_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(checkoutData),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Polar API error:', response.status, errorText);
-        throw new Error(`Failed to create checkout session: ${response.status} - ${errorText}`);
-      }
-
-      const { url: checkoutUrl } = await response.json();
-      
-      if (!checkoutUrl) {
-        throw new Error('No checkout URL received from Polar');
-      }
-      
-      // Redirect to Polar checkout
-      window.location.href = checkoutUrl;
       
     } catch (error) {
       console.error('Polar checkout error:', error);
@@ -234,17 +198,15 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
           Choose the plan that works best for you. Powered by Polar.
         </CardDescription>
         
-        {/* Development/Demo Mode Notice */}
-        {(!import.meta.env.VITE_POLAR_ACCESS_TOKEN || !POLAR_PRODUCT_PRICES.pro || !POLAR_PRODUCT_PRICES.elite) && (
-          <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-            <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 text-sm font-medium">
-              <span>⚠️ Demo Mode</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Payment system is in demo mode. Upgrades will simulate successful payments for testing purposes.
-            </p>
+        {/* Serverless Payment Notice */}
+        <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+          <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 text-sm font-medium">
+            <span>🔒 Secure Serverless Payments</span>
           </div>
-        )}
+          <p className="text-xs text-muted-foreground mt-1">
+            Payment processing is handled securely through encrypted serverless functions. Demo mode activates automatically if configuration is incomplete.
+          </p>
+        </div>
       </CardHeader>
       <CardContent>
         {/* Current subscription status */}
