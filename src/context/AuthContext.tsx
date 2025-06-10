@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Session, User } from "@supabase/supabase-js";
@@ -30,9 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         
-        if (event === 'SIGNED_IN') {
-          toast.success("Successfully signed in!");
-        } else if (event === 'SIGNED_OUT') {
+        if (event === 'SIGNED_OUT') {
           toast.info("You have been signed out");
         }
       }
