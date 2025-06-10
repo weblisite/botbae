@@ -1,4 +1,5 @@
 import { Menu, Bell, User } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -22,15 +23,69 @@ export function DashboardHeader({
   setShowSidebar,
   relationshipStage,
 }: HeaderProps) {
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleResize = () => {
+      // Detect mobile keyboard by checking if the viewport height has significantly shrunk
+      const windowHeight = window.innerHeight;
+      const screenHeight = window.screen.height;
+      const threshold = screenHeight * 0.75; // If viewport is less than 75% of screen height, keyboard is likely visible
+      
+      setKeyboardVisible(windowHeight < threshold);
+    };
+
+    const handleFocusIn = () => {
+      // Additional keyboard detection via input focus
+      setTimeout(() => {
+        const windowHeight = window.innerHeight;
+        const screenHeight = window.screen.height;
+        const threshold = screenHeight * 0.75;
+        setKeyboardVisible(windowHeight < threshold);
+      }, 300); // Delay to allow keyboard animation
+    };
+
+    const handleFocusOut = () => {
+      // Keyboard likely hidden when inputs lose focus
+      setTimeout(() => {
+        setKeyboardVisible(false);
+      }, 300);
+    };
+
+    // Listen for window resize (keyboard show/hide)
+    window.addEventListener('resize', handleResize);
+    
+    // Listen for input focus events
+    document.addEventListener('focusin', handleFocusIn);
+    document.addEventListener('focusout', handleFocusOut);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('focusin', handleFocusIn);
+      document.removeEventListener('focusout', handleFocusOut);
+    };
+  }, [isMobile]);
+
   return (
     <header 
-      className="sticky-header sticky top-0 z-[100] h-16 border-b border-muted flex items-center px-4 justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shrink-0"
+      className={`
+        ${keyboardVisible && isMobile ? 'fixed' : 'sticky-header sticky'} 
+        top-0 z-[100] h-16 border-b border-muted flex items-center px-4 justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shrink-0
+        ${keyboardVisible && isMobile ? 'left-0 right-0' : ''}
+      `}
       style={{
-        position: 'sticky',
+        position: keyboardVisible && isMobile ? 'fixed' : 'sticky',
         top: 0,
         zIndex: 100,
         WebkitBackdropFilter: 'blur(8px)',
-        backdropFilter: 'blur(8px)'
+        backdropFilter: 'blur(8px)',
+        ...(keyboardVisible && isMobile && {
+          left: 0,
+          right: 0,
+          width: '100%'
+        })
       }}
     >
       <div className="flex items-center gap-4">
