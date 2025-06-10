@@ -182,8 +182,7 @@ export function CompanionCard({
       {/* Relationship status */}
       <div className="mt-6 pt-4 border-t border-muted">
         <div className="text-center mb-4">
-          <p className="text-sm text-muted-foreground">Relationship</p>
-          <p className="font-medium">{relationshipStage}</p>
+          <p className="font-medium">Relationship: {relationshipStage}</p>
         </div>
         
         <div className="flex justify-center mb-2">
