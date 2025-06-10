@@ -188,11 +188,11 @@ export default function SettingsForm() {
 
   return (
     <Tabs defaultValue={defaultTab}>
-      <TabsList className="grid grid-cols-4 w-full mb-8">
-        <TabsTrigger value="profile">Profile</TabsTrigger>
-        <TabsTrigger value="subscription">Subscription</TabsTrigger>
-        <TabsTrigger value="notifications">Notifications</TabsTrigger>
-        <TabsTrigger value="security">Security</TabsTrigger>
+      <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full mb-8 h-auto p-1">
+        <TabsTrigger value="profile" className="text-xs sm:text-sm px-2 py-2">Profile</TabsTrigger>
+        <TabsTrigger value="subscription" className="text-xs sm:text-sm px-2 py-2">Subscription</TabsTrigger>
+        <TabsTrigger value="notifications" className="text-xs sm:text-sm px-2 py-2">Notifications</TabsTrigger>
+        <TabsTrigger value="security" className="text-xs sm:text-sm px-2 py-2">Security</TabsTrigger>
       </TabsList>
       
       <TabsContent value="profile">
