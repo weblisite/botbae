@@ -245,17 +245,6 @@ function MainComponent() {
     }
   };
 
-  if (!botbaeConfig || !userMemory) {
-    // If data is not available, render a minimal loading state (should be brief with optimizations)
-    return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-[#1a1a2e] to-[#16213e]">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-white">Preparing your Botbae...</h2>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
@@ -272,7 +261,7 @@ function MainComponent() {
           isMobile={isMobile}
           showSidebar={showSidebar}
           setShowSidebar={setShowSidebar}
-          relationshipStage={userMemory.relationshipStage}
+          relationshipStage={userMemory?.relationshipStage || "getting_to_know"}
         />
         
         {/* Message Counter for Free and Pro Users */}
@@ -315,26 +304,30 @@ function MainComponent() {
         
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           {customizeView ? (
-            <CustomizationForm
-              botbaeConfig={botbaeConfig}
-              updateBotbaeConfig={updateBotbaeConfig}
-              onSave={() => setCustomizeView(false)}
-              onCancel={() => setCustomizeView(false)}
-            />
+            botbaeConfig && (
+              <CustomizationForm
+                botbaeConfig={botbaeConfig}
+                updateBotbaeConfig={updateBotbaeConfig}
+                onSave={() => setCustomizeView(false)}
+                onCancel={() => setCustomizeView(false)}
+              />
+            )
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
               {/* Left column - companion info */}
               <div className="lg:col-span-1 space-y-6">
-                <CompanionCard
-                  botbaeConfig={botbaeConfig}
-                  relationshipStage={userMemory.relationshipStage}
-                  relationshipProgress={relationshipProgress}
-                  onCustomizeClick={() => setCustomizeView(true)}
-                  onDeepenBond={handleDeepenBond}
-                />
+                {botbaeConfig && userMemory && (
+                  <CompanionCard
+                    botbaeConfig={botbaeConfig}
+                    relationshipStage={userMemory.relationshipStage}
+                    relationshipProgress={relationshipProgress}
+                    onCustomizeClick={() => setCustomizeView(true)}
+                    onDeepenBond={handleDeepenBond}
+                  />
+                )}
                 
                 {/* Milestones Display */}
-                {recentMilestones.length > 0 && (
+                {recentMilestones.length > 0 && botbaeConfig && (
                   <MilestoneDisplay
                     milestones={recentMilestones}
                     companionName={botbaeConfig.name}
@@ -344,15 +337,17 @@ function MainComponent() {
               
               {/* Right column - chat */}
               <div className="lg:col-span-2 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)] botbae-glass">
-                <ChatInterface
-                  messages={messages}
-                  setMessages={setMessages}
-                  streamingMessage={streamingMessage}
-                  setStreamingMessage={setStreamingMessage}
-                  botName={botbaeConfig.name}
-                  botbaeConfig={botbaeConfig}
-                  handleSendMessage={handleSendMessage}
-                />
+                {botbaeConfig && (
+                  <ChatInterface
+                    messages={messages}
+                    setMessages={setMessages}
+                    streamingMessage={streamingMessage}
+                    setStreamingMessage={setStreamingMessage}
+                    botName={botbaeConfig.name}
+                    botbaeConfig={botbaeConfig}
+                    handleSendMessage={handleSendMessage}
+                  />
+                )}
               </div>
             </div>
           )}
@@ -390,18 +385,20 @@ function MainComponent() {
       </Dialog>
 
       {/* Message limit modal */}
-      <MessageLimitModal
-        isOpen={showMessageLimitModal}
-        onClose={() => setShowMessageLimitModal(false)}
-        messagesUsed={limitData.messagesUsed}
-        messageLimit={limitData.messageLimit}
-        companionName={botbaeConfig.name}
-        subscriptionStatus={limitData.subscriptionStatus}
-        onUpgradeSuccess={() => {
-          // Refresh the limits data after successful upgrade
-          window.location.reload();
-        }}
-      />
+      {botbaeConfig && (
+        <MessageLimitModal
+          isOpen={showMessageLimitModal}
+          onClose={() => setShowMessageLimitModal(false)}
+          messagesUsed={limitData.messagesUsed}
+          messageLimit={limitData.messageLimit}
+          companionName={botbaeConfig.name}
+          subscriptionStatus={limitData.subscriptionStatus}
+          onUpgradeSuccess={() => {
+            // Refresh the limits data after successful upgrade
+            window.location.reload();
+          }}
+        />
+      )}
     </div>
   );
 }
