@@ -23,7 +23,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useBotbaeData } from "@/hooks/useBotbaeData";
 import { useMessageLimits } from "@/hooks/useMessageLimits";
 import { supabase } from "@/integrations/supabase/client";
-import { cn } from "@/lib/utils";
 
 function MainComponent() {
   const isMobile = useIsMobile();
@@ -258,7 +257,7 @@ function MainComponent() {
   }
 
   return (
-    <div className={cn("flex h-screen overflow-hidden", isMobile && showSidebar && "sidebar-open")}>
+    <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
       <DashboardSidebar
         isMobile={isMobile}
@@ -268,7 +267,7 @@ function MainComponent() {
       />
       
       {/* Main content */}
-      <div className={cn("flex-1 flex flex-col h-screen overflow-hidden", isMobile && "main-content")}>
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <DashboardHeader
           isMobile={isMobile}
           showSidebar={showSidebar}

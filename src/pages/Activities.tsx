@@ -100,7 +100,7 @@ export default function Activities() {
         isMobile={isMobile}
         showSidebar={showSidebar}
         setShowSidebar={setShowSidebar}
-        onSignOut={() => {}}
+        onSignOut={async () => {}}
       />
       
       {/* Main content */}
@@ -114,26 +114,26 @@ export default function Activities() {
         
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-6xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">Activities with {botbaeConfig.name}</h1>
+            <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 px-1">Activities with {botbaeConfig.name}</h1>
             
-            <Tabs defaultValue="calendar">
-              <TabsList className="mb-6">
-                <TabsTrigger value="calendar">Calendar</TabsTrigger>
-                <TabsTrigger value="activities">Activities</TabsTrigger>
-                <TabsTrigger value="history">History</TabsTrigger>
+            <Tabs defaultValue="calendar" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 mb-4 md:mb-6">
+                <TabsTrigger value="calendar" className="text-xs md:text-sm">Calendar</TabsTrigger>
+                <TabsTrigger value="activities" className="text-xs md:text-sm">Activities</TabsTrigger>
+                <TabsTrigger value="history" className="text-xs md:text-sm">History</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="calendar">
+              <TabsContent value="calendar" className="space-y-4">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Activity Calendar</CardTitle>
-                    <CardDescription>
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg md:text-xl">Activity Calendar</CardTitle>
+                    <CardDescription className="text-sm">
                       Schedule and manage your activities with {botbaeConfig.name}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">
                     <div className="p-4 border-b">
-                      <div className="flex items-center space-x-4">
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                         <div className="flex-1">
                           <Popover>
                             <PopoverTrigger asChild>
@@ -141,8 +141,10 @@ export default function Activities() {
                                 variant={"outline"}
                                 className="w-full justify-start text-left font-normal"
                               >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                                <span className="truncate">
+                                  {date ? format(date, "PPP") : "Pick a date"}
+                                </span>
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0">
@@ -155,36 +157,45 @@ export default function Activities() {
                             </PopoverContent>
                           </Popover>
                         </div>
-                        <Button onClick={() => setShowActivityDialog(true)}>
-                          Schedule New Activity
+                        <Button 
+                          onClick={() => setShowActivityDialog(true)}
+                          className="w-full sm:w-auto whitespace-nowrap"
+                          size={isMobile ? "default" : "default"}
+                        >
+                          <span className="hidden sm:inline">Schedule New Activity</span>
+                          <span className="sm:hidden">New Activity</span>
                         </Button>
                       </div>
                     </div>
                     
                     <div className="p-4">
-                      <h3 className="text-lg font-medium mb-4">Upcoming Activities</h3>
+                      <h3 className="text-base md:text-lg font-medium mb-4">Upcoming Activities</h3>
                       <div className="space-y-4">
-                        <div className="p-4 border rounded-md">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="font-medium">Virtual Date</h4>
+                        <div className="p-3 md:p-4 border rounded-md">
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-2 sm:space-y-0">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium truncate">Virtual Date</h4>
                               <p className="text-sm text-muted-foreground">
                                 {format(new Date(date!.getTime() + 24 * 60 * 60 * 1000), "PPP")} at 7:00 PM
                               </p>
                             </div>
-                            <Button variant="outline" size="sm">Reschedule</Button>
+                            <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                              Reschedule
+                            </Button>
                           </div>
                         </div>
                         
-                        <div className="p-4 border rounded-md">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="font-medium">Daily Check-in</h4>
+                        <div className="p-3 md:p-4 border rounded-md">
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-2 sm:space-y-0">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium truncate">Daily Check-in</h4>
                               <p className="text-sm text-muted-foreground">
                                 {format(new Date(date!.getTime() + 2 * 24 * 60 * 60 * 1000), "PPP")} at 9:00 AM
                               </p>
                             </div>
-                            <Button variant="outline" size="sm">Reschedule</Button>
+                            <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                              Reschedule
+                            </Button>
                           </div>
                         </div>
                       </div>
@@ -193,33 +204,33 @@ export default function Activities() {
                 </Card>
               </TabsContent>
               
-              <TabsContent value="activities">
+              <TabsContent value="activities" className="space-y-4">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Available Activities</CardTitle>
-                    <CardDescription>
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg md:text-xl">Available Activities</CardTitle>
+                    <CardDescription className="text-sm">
                       Choose from various activities to enhance your relationship
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                       {activities.map((activity) => (
-                        <Card key={activity.id}>
+                        <Card key={activity.id} className="h-full">
                           <CardHeader className="pb-2">
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                {activity.icon}
-                                <CardTitle className="text-base">{activity.title}</CardTitle>
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <div className="flex-shrink-0">{activity.icon}</div>
+                                <CardTitle className="text-base truncate">{activity.title}</CardTitle>
                               </div>
                               {activity.premium && (
-                                <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
+                                <Badge variant="outline" className="bg-yellow-100 text-yellow-800 flex-shrink-0">
                                   Premium
                                 </Badge>
                               )}
                             </div>
                           </CardHeader>
-                          <CardContent className="pt-2 pb-4">
-                            <p className="text-sm text-muted-foreground mb-2">
+                          <CardContent className="pt-2 pb-4 flex-1">
+                            <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
                               {activity.description}
                             </p>
                             <div className="text-xs text-muted-foreground">
@@ -245,43 +256,47 @@ export default function Activities() {
                 </Card>
               </TabsContent>
               
-              <TabsContent value="history">
+              <TabsContent value="history" className="space-y-4">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Activity History</CardTitle>
-                    <CardDescription>
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg md:text-xl">Activity History</CardTitle>
+                    <CardDescription className="text-sm">
                       Past activities and experiences with {botbaeConfig.name}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="p-4 border rounded-md bg-muted/30">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-medium">Virtual Date</h4>
+                      <div className="p-3 md:p-4 border rounded-md bg-muted/30">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-2 sm:space-y-0">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium truncate">Virtual Date</h4>
                             <p className="text-sm text-muted-foreground">
                               One week ago
                             </p>
-                            <p className="text-sm mt-2">
+                            <p className="text-sm mt-2 line-clamp-2">
                               You discussed travel destinations and shared stories about your favorite trips.
                             </p>
                           </div>
-                          <Button variant="outline" size="sm">View Details</Button>
+                          <Button variant="outline" size="sm" className="w-full sm:w-auto flex-shrink-0">
+                            View Details
+                          </Button>
                         </div>
                       </div>
                       
-                      <div className="p-4 border rounded-md bg-muted/30">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-medium">Daily Check-in</h4>
+                      <div className="p-3 md:p-4 border rounded-md bg-muted/30">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-2 sm:space-y-0">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium truncate">Daily Check-in</h4>
                             <p className="text-sm text-muted-foreground">
                               Two weeks ago
                             </p>
-                            <p className="text-sm mt-2">
+                            <p className="text-sm mt-2 line-clamp-2">
                               You shared about your day and {botbaeConfig.name} offered supportive advice.
                             </p>
                           </div>
-                          <Button variant="outline" size="sm">View Details</Button>
+                          <Button variant="outline" size="sm" className="w-full sm:w-auto flex-shrink-0">
+                            View Details
+                          </Button>
                         </div>
                       </div>
                     </div>

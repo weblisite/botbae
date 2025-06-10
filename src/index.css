@@ -254,39 +254,18 @@
 /* Responsive improvements */
 @media (max-width: 768px) {
   .botbae-container {
-    @apply px-3;
+    padding: 0 1rem;
   }
-
+  
   .botbae-button {
-    @apply py-2 px-4 text-sm;
-  }
-
-  /* Mobile sidebar optimizations */  
-  .mobile-sidebar {
-    max-width: calc(100vw - 2rem);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  }
-
-  /* Prevent horizontal scroll when sidebar is open */
-  .sidebar-open {
-    overflow-x: hidden;
-  }
-
-  /* Ensure main content area doesn't cause horizontal scroll */
-  .main-content {
-    min-width: 0;
-  }
-
-  /* Improve touch targets on mobile */
-  .nav-item {
-    min-height: 44px;
+    width: 100%;
+    padding: 1rem;
   }
 }
 
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
 
 /* Loading states */
@@ -311,4 +290,27 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #7C3AED, #DB2777);
+}
+
+@layer utilities {
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
 }

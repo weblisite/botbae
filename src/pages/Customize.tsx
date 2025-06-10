@@ -42,7 +42,7 @@ export default function Customize() {
         isMobile={isMobile}
         showSidebar={showSidebar}
         setShowSidebar={setShowSidebar}
-        onSignOut={() => {}}
+        onSignOut={async () => {}}
       />
       
       {/* Main content */}
@@ -56,7 +56,7 @@ export default function Customize() {
         
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">Customize Your Botbae</h1>
+            <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 px-1">Customize Your Botbae</h1>
             
             <CustomizationForm
               botbaeConfig={botbaeConfig}

@@ -22,7 +22,7 @@ export default function Settings() {
         isMobile={isMobile}
         showSidebar={showSidebar}
         setShowSidebar={setShowSidebar}
-        onSignOut={() => {}}
+        onSignOut={async () => {}}
       />
       
       {/* Main content */}
@@ -36,7 +36,7 @@ export default function Settings() {
         
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">Account Settings</h1>
+            <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 px-1">Account Settings</h1>
             <SettingsForm />
           </div>
         </div>

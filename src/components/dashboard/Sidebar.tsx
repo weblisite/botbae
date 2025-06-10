@@ -23,37 +23,37 @@ export function DashboardSidebar({ isMobile, showSidebar, setShowSidebar, onSign
   
   const navItems = [
     {
-      icon: <MessageSquare size={isMobile ? 18 : 20} />,
+      icon: <MessageSquare size={20} />,
       label: "Chat",
       path: "/dashboard",
     },
     {
-      icon: <UserCircle size={isMobile ? 18 : 20} />,
+      icon: <UserCircle size={20} />,
       label: "Customize",
       path: "/dashboard/customize",
     },
     {
-      icon: <Heart size={isMobile ? 18 : 20} />,
+      icon: <Heart size={20} />,
       label: "Relationship",
       path: "/dashboard/relationship",
     },
     {
-      icon: <Calendar size={isMobile ? 18 : 20} />,
+      icon: <Calendar size={20} />,
       label: "Activities",
       path: "/dashboard/activities",
     },
     {
-      icon: <BarChart2 size={isMobile ? 18 : 20} />,
+      icon: <BarChart2 size={20} />,
       label: "Insights",
       path: "/dashboard/insights",
     },
     {
-      icon: <Settings size={isMobile ? 18 : 20} />,
+      icon: <Settings size={20} />,
       label: "Settings",
       path: "/dashboard/settings",
     },
   ];
-  
+
   return (
     <>
       {/* Mobile overlay */}
@@ -65,69 +65,52 @@ export function DashboardSidebar({ isMobile, showSidebar, setShowSidebar, onSign
       )}
       
       {/* Sidebar */}
-      <aside 
-        className={cn(
-          "bg-muted border-r border-muted h-full flex flex-col transition-transform duration-300 ease-in-out",
-          // Responsive width: smaller on mobile to prevent horizontal scrolling
-          isMobile ? "w-72 max-w-[85vw] sm:w-64 mobile-sidebar" : "w-64",
+    <aside 
+      className={cn(
+          "bg-muted border-r border-muted h-full w-64 flex flex-col transition-transform duration-300 ease-in-out",
           isMobile ? "fixed z-40" : "relative",
           isMobile && !showSidebar && "-translate-x-full",
           isMobile && showSidebar && "translate-x-0"
-        )}
-      >
-        <div className={cn("border-b border-muted", isMobile ? "p-3" : "p-4")}>
-          <Link 
-            to="/" 
-            className={cn(
-              "font-bold bg-gradient-to-r from-botbae-accent to-botbae-secondary bg-clip-text text-transparent",
-              isMobile ? "text-xl" : "text-2xl"
-            )}
-          >
-            Botbae
-          </Link>
-        </div>
-        
-        <nav className={cn("flex-grow", isMobile ? "p-3" : "p-4")}>
-          <ul className={cn(isMobile ? "space-y-1" : "space-y-2")}>
-            {navItems.map((item) => (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg transition-colors nav-item",
-                    // Mobile-optimized padding and text
-                    isMobile ? "px-2 py-2.5 text-sm" : "px-3 py-2 text-base",
-                    location.pathname === item.path
-                      ? "bg-botbae-accent text-white"
-                      : "hover:bg-muted/80 text-white/70 hover:text-white"
-                  )}
-                  onClick={() => isMobile && setShowSidebar(false)}
-                >
-                  <div className="flex-shrink-0">
-                    {item.icon}
-                  </div>
-                  <span className="truncate">{item.label}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        
-        <div className={cn("border-t border-muted mt-auto", isMobile ? "p-3" : "p-4")}>
-          <button
-            onClick={onSignOut}
-            className={cn(
-              "flex w-full items-center gap-3 rounded-lg text-white/70 hover:text-white hover:bg-muted/80 transition-colors nav-item",
-              isMobile ? "px-2 py-2.5 text-sm" : "px-3 py-2 text-base"
-            )}
-          >
-            <div className="flex-shrink-0">
-              <LogOut size={isMobile ? 18 : 20} />
-            </div>
-            <span className="truncate">Sign Out</span>
-          </button>
-        </div>
-      </aside>
+      )}
+    >
+      <div className="p-4 border-b border-muted">
+        <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-botbae-accent to-botbae-secondary bg-clip-text text-transparent">
+          Botbae
+        </Link>
+      </div>
+      
+      <nav className="flex-grow p-4">
+        <ul className="space-y-2">
+          {navItems.map((item) => (
+            <li key={item.path}>
+              <Link
+                to={item.path}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
+                  location.pathname === item.path
+                    ? "bg-botbae-accent text-white"
+                    : "hover:bg-muted/80 text-white/70 hover:text-white"
+                )}
+                onClick={() => isMobile && setShowSidebar(false)}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      
+      <div className="p-4 border-t border-muted mt-auto">
+        <button
+          onClick={onSignOut}
+          className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-muted/80 transition-colors"
+        >
+          <LogOut size={20} />
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
     </>
   );
 }
