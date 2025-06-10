@@ -120,12 +120,25 @@ export function UserSubscription({ profile }: UserSubscriptionProps) {
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
               <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">Current Plan Benefits</h4>
               <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                <li>• Unlimited messages with your Botbae</li>
-                <li>• Advanced companion customization</li>
-                <li>• All relationship stages unlocked</li>
-                <li>• Enhanced conversation memory</li>
-                <li>• Full mood tracking & insights</li>
-                <li>• Virtual activities & dates</li>
+                {profile.subscription_plan?.toLowerCase() === 'pro' ? (
+                  <>
+                    <li>• 1,000 messages per month with your Botbae</li>
+                    <li>• Advanced companion customization</li>
+                    <li>• All relationship stages unlocked</li>
+                    <li>• Enhanced conversation memory</li>
+                    <li>• Full mood tracking & insights</li>
+                    <li>• Virtual activities & dates</li>
+                  </>
+                ) : (
+                  <>
+                    <li>• Unlimited messages with your Botbae</li>
+                    <li>• Advanced companion customization</li>
+                    <li>• All relationship stages unlocked</li>
+                    <li>• Enhanced conversation memory</li>
+                    <li>• Full mood tracking & insights</li>
+                    <li>• Virtual activities & dates</li>
+                  </>
+                )}
                 {profile.subscription_plan?.toLowerCase() === 'elite' && (
                   <>
                     <li>• Create up to 3 unique Botbaes</li>
@@ -201,7 +214,7 @@ export function UserSubscription({ profile }: UserSubscriptionProps) {
             <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border">
               <h4 className="font-medium mb-2">Unlock Premium Features</h4>
               <p className="text-sm text-muted-foreground mb-3">
-                Upgrade to Pro or Elite for unlimited messages, advanced customization, and exclusive features.
+                Upgrade to Pro (1,000 messages/month) or Elite (unlimited messages) for advanced features and deeper connections.
               </p>
               <Button 
                 onClick={() => {

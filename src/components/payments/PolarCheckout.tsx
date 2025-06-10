@@ -46,7 +46,7 @@ const polarPlans: PolarPlan[] = [
     interval: "month",
     popular: true,
     features: [
-      "Unlimited messages",
+      "1,000 messages per month",
       "Advanced companion customization", 
       "Custom avatar uploads",
       "All relationship stages",
@@ -62,6 +62,7 @@ const polarPlans: PolarPlan[] = [
     currency: "USD",
     interval: "month",
     features: [
+      "UNLIMITED messages",
       "All Pro features",
       "Create up to 3 unique Botbaes",
       "Priority support",

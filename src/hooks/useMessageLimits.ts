@@ -45,15 +45,23 @@ export function useMessageLimits() {
           const subscriptionStatus = profile.subscription_status || 'free';
           const isPremium = profile.is_premium || false;
           
-          // Handle unlimited plans (message_limit = 999999 means unlimited)
-          const isUnlimited = isPremium && (messageLimit >= 999999 || subscriptionStatus === 'elite');
+          // Handle unlimited plans (message_limit = 999999 means unlimited for Elite)
+          const isUnlimited = subscriptionStatus === 'elite' && (messageLimit >= 999999);
           const messagesRemaining = isUnlimited ? Infinity : Math.max(0, messageLimit - messagesUsed);
-          const canSendMessage = isPremium || isUnlimited || subscriptionStatus !== 'free' || messagesRemaining > 0;
+          
+          // Determine if user can send message
+          let canSendMessage = true;
+          if (subscriptionStatus === 'free' && messagesRemaining <= 0) {
+            canSendMessage = false;
+          } else if (subscriptionStatus === 'pro' && messagesRemaining <= 0) {
+            canSendMessage = false;
+          }
+          // Elite users with unlimited can always send
 
           setLimitData({
             messagesUsed,
             messageLimit,
-            subscriptionStatus: isPremium ? 'premium' : (subscriptionStatus as 'free' | 'premium' | 'pro' | 'elite'),
+            subscriptionStatus: subscriptionStatus as 'free' | 'premium' | 'pro' | 'elite',
             canSendMessage,
             messagesRemaining,
           });
@@ -82,7 +90,11 @@ export function useMessageLimits() {
 
     // Check if user can send message
     if (!limitData.canSendMessage) {
-      toast.error("You've reached your message limit. Please upgrade to continue chatting.");
+      if (limitData.subscriptionStatus === 'free') {
+        toast.error("You've reached your free message limit. Please upgrade to continue chatting.");
+      } else if (limitData.subscriptionStatus === 'pro') {
+        toast.error("You've reached your Pro plan limit (1000 messages). Upgrade to Elite for unlimited messages!");
+      }
       return false;
     }
 
@@ -101,9 +113,15 @@ export function useMessageLimits() {
       if (error) throw error;
 
       // Update local state
-      const isUnlimited = limitData.subscriptionStatus !== 'free' && (limitData.messageLimit >= 999999 || limitData.subscriptionStatus === 'elite');
+      const isUnlimited = limitData.subscriptionStatus === 'elite' && (limitData.messageLimit >= 999999);
       const messagesRemaining = isUnlimited ? Infinity : Math.max(0, limitData.messageLimit - newMessagesUsed);
-      const canSendMessage = limitData.subscriptionStatus !== 'free' || isUnlimited || messagesRemaining > 0;
+      
+      let canSendMessage = true;
+      if (limitData.subscriptionStatus === 'free' && messagesRemaining <= 0) {
+        canSendMessage = false;
+      } else if (limitData.subscriptionStatus === 'pro' && messagesRemaining <= 0) {
+        canSendMessage = false;
+      }
 
       setLimitData(prev => ({
         ...prev,
@@ -112,10 +130,10 @@ export function useMessageLimits() {
         canSendMessage,
       }));
 
-      // Show warning when approaching limit (optimized for 3-message testing)
+      // Show warnings based on subscription status
       if (limitData.subscriptionStatus === 'free') {
         if (messagesRemaining === 1 && limitData.messageLimit === 3) {
-          toast.warning("⚠️ Only 1 free message remaining! Consider upgrading for unlimited chats.", {
+          toast.warning("⚠️ Only 1 free message remaining! Consider upgrading for more chats.", {
             duration: 4000,
           });
         } else if (messagesRemaining === 0) {
@@ -124,9 +142,28 @@ export function useMessageLimits() {
           });
         } else if (messagesRemaining === 2 && limitData.messageLimit > 3) {
           // For when we go back to 10 messages
-          toast.warning("⚠️ Only 2 free messages remaining! Consider upgrading for unlimited chats.");
+          toast.warning("⚠️ Only 2 free messages remaining! Consider upgrading for more chats.");
         } else if (messagesRemaining === 1 && limitData.messageLimit > 3) {
           toast.warning("⚠️ This is your last free message! Upgrade to continue chatting.");
+        }
+      } else if (limitData.subscriptionStatus === 'pro') {
+        // Pro plan warnings for 1000 message limit
+        if (messagesRemaining <= 50 && messagesRemaining > 10) {
+          toast.warning(`⚠️ Pro plan: ${messagesRemaining} messages remaining this month. Consider upgrading to Elite for unlimited!`, {
+            duration: 4000,
+          });
+        } else if (messagesRemaining <= 10 && messagesRemaining > 1) {
+          toast.warning(`⚠️ Pro plan: Only ${messagesRemaining} messages left! Upgrade to Elite for unlimited conversations.`, {
+            duration: 5000,
+          });
+        } else if (messagesRemaining === 1) {
+          toast.warning("🚨 Pro plan: This is your last message this month! Upgrade to Elite for unlimited access.", {
+            duration: 6000,
+          });
+        } else if (messagesRemaining === 0) {
+          toast.error("🚫 You've reached your Pro plan limit (1000 messages). Upgrade to Elite for unlimited conversations!", {
+            duration: 5000,
+          });
         }
       }
 
@@ -156,7 +193,9 @@ export function useMessageLimits() {
       setLimitData(prev => ({
         ...prev,
         messagesUsed: 0,
-        messagesRemaining: prev.messageLimit,
+        messagesRemaining: prev.subscriptionStatus === 'elite' && prev.messageLimit >= 999999 
+          ? Infinity 
+          : prev.messageLimit,
         canSendMessage: true,
       }));
 
@@ -178,7 +217,7 @@ export function useMessageLimits() {
         updated_at: new Date().toISOString()
       };
 
-      if (newLimit) {
+      if (newLimit !== undefined) {
         updates.message_limit = newLimit;
       }
 
@@ -189,8 +228,9 @@ export function useMessageLimits() {
 
       if (error) throw error;
 
-      const messageLimit = newLimit || limitData.messageLimit;
-      const messagesRemaining = Math.max(0, messageLimit - limitData.messagesUsed);
+      const messageLimit = newLimit !== undefined ? newLimit : limitData.messageLimit;
+      const isUnlimited = newStatus === 'elite' && messageLimit >= 999999;
+      const messagesRemaining = isUnlimited ? Infinity : Math.max(0, messageLimit - limitData.messagesUsed);
 
       setLimitData(prev => ({
         ...prev,

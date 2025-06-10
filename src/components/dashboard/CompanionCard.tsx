@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { BotbaeAvatar } from "@/components/chat/Avatar";
+import { ConversationSuggestions } from "@/components/relationship/ConversationSuggestions";
 
 interface BotbaeConfig {
   name: string;
@@ -36,6 +37,8 @@ interface CompanionCardProps {
   relationshipProgress: number;
   onCustomizeClick: () => void;
   onDeepenBond: () => void;
+  conversationSuggestions?: string[];
+  onSuggestionClick?: (suggestion: string) => void;
 }
 
 export function CompanionCard({
@@ -44,6 +47,8 @@ export function CompanionCard({
   relationshipProgress,
   onCustomizeClick,
   onDeepenBond,
+  conversationSuggestions = [],
+  onSuggestionClick,
 }: CompanionCardProps) {
   // Get relationship color based on stage
   const getRelationshipColor = () => {
@@ -184,6 +189,16 @@ export function CompanionCard({
         </div>
         <Progress value={relationshipProgress} className="h-2" />
       </div>
+      
+      {/* Conversation Suggestions */}
+      {conversationSuggestions.length > 0 && onSuggestionClick && (
+        <div className="mt-4">
+          <ConversationSuggestions
+            relationshipStage={relationshipStage}
+            onSuggestionClick={onSuggestionClick}
+          />
+        </div>
+      )}
     </div>
   );
 }

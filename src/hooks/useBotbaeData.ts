@@ -1,7 +1,13 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
+import { 
+  RelationshipProgressionService, 
+  type ConversationMetrics, 
+  type RelationshipContext,
+  type MilestoneEvent 
+} from "@/services/relationshipProgressionService";
 
 // Types for our botbae data
 export interface BotbaeConfig {
@@ -30,6 +36,7 @@ export interface UserMemory {
   relationshipStage: string;
   relationshipMilestones: any[];
   relationshipStartDate: string;
+  relationshipProgress: number;
   preferences: Record<string, any>;
   goals: any[];
 }
@@ -68,6 +75,7 @@ const mockUserMemory: UserMemory = {
   relationshipStage: "New Friend",
   relationshipMilestones: [],
   relationshipStartDate: new Date().toISOString(),
+  relationshipProgress: 25,
   preferences: {},
   goals: []
 };
@@ -100,6 +108,152 @@ export function useBotbaeData() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [relationshipProgress, setRelationshipProgress] = useState(25);
+  const [recentMilestones, setRecentMilestones] = useState<MilestoneEvent[]>([]);
+
+  // Calculate personality compatibility
+  const calculatePersonalityCompatibility = (botbaeConfig: BotbaeConfig): number => {
+    // Simple compatibility calculation based on personality traits
+    // In a real implementation, this could be more sophisticated
+    const { humor, empathy, intellect, confidence, creativity } = botbaeConfig.personality;
+    const avgPersonality = (humor + empathy + intellect + confidence + creativity) / 5;
+    return Math.round(avgPersonality * 0.8); // Convert to compatibility score
+  };
+
+  // Save relationship progress to database
+  const saveRelationshipProgress = async (progress: number) => {
+    if (!user || !userMemory) return;
+    
+    try {
+      await supabase
+        .from('user_memories')
+        .update({
+          relationship_progress: progress,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', userMemory.id);
+    } catch (error: any) {
+      console.error('Error saving relationship progress:', error);
+      // Don't show toast as this would be too frequent
+    }
+  };
+
+  // Enhanced progress update with intelligent analysis
+  const updateRelationshipProgressIntelligent = (userMessage: string, botResponse: string) => {
+    if (!userMemory || !botbaeConfig) return;
+
+    // Analyze conversation quality
+    const metrics = RelationshipProgressionService.analyzeConversation(userMessage, botResponse);
+    
+    // Build relationship context
+    const context: RelationshipContext = {
+      currentStage: userMemory.relationshipStage,
+      stageStartDate: new Date(userMemory.relationshipStartDate),
+      totalMessages: messages.length,
+      conversationFrequency: 1.0, // Could be calculated from message history
+      personalityCompatibility: calculatePersonalityCompatibility(botbaeConfig)
+    };
+
+    // Calculate user behavior history from recent messages
+    const recentMessages = messages.slice(-10); // Last 10 messages for behavior analysis
+    const userBehaviorHistory = {
+      avgMessageLength: recentMessages
+        .filter(m => m.sender === 'user')
+        .reduce((acc, m) => acc + m.text.length, 0) / Math.max(recentMessages.filter(m => m.sender === 'user').length, 1),
+      emotionalOpenness: metrics.personalSharing + metrics.emotionalWords + metrics.emotionalDepth,
+      conversationInitiation: recentMessages.filter(m => m.sender === 'user').length / Math.max(recentMessages.length, 1),
+      responseTime: 180 // Mock response time in seconds - could be calculated from timestamps
+    };
+
+    // Calculate intelligent progress increase with enhanced features
+    const progressIncrease = RelationshipProgressionService.calculateProgressIncrease(metrics, context, userBehaviorHistory);
+    
+    // Check for milestones
+    const messageHistory = messages.map(msg => ({
+      text: msg.text,
+      timestamp: msg.timestamp
+    }));
+    const newMilestones = RelationshipProgressionService.checkForMilestones(metrics, context, messageHistory);
+    
+    // Update progress
+    setRelationshipProgress(prev => {
+      const newProgress = Math.min(prev + progressIncrease, 100);
+      
+      // Save progress to database
+      saveRelationshipProgress(newProgress);
+      
+      // Show enhanced progress notification with context
+      const qualityDescription = getEnhancedProgressQualityDescription(metrics, progressIncrease, userBehaviorHistory);
+      toast.success(`💝 ${qualityDescription} (+${progressIncrease}% relationship progress)`);
+      
+      return newProgress;
+    });
+
+    // Add new milestones
+    if (newMilestones.length > 0) {
+      setRecentMilestones(prev => [...prev, ...newMilestones]);
+      
+      // Show milestone notifications
+      newMilestones.forEach(milestone => {
+        toast.success(`🎉 Milestone: ${milestone.title}`);
+        
+        // Apply milestone bonus progress
+        setRelationshipProgress(prev => {
+          const newProgress = Math.min(prev + milestone.progressBonus, 100);
+          saveRelationshipProgress(newProgress); // Save milestone progress too
+          return newProgress;
+        });
+      });
+    }
+  };
+
+  // Enhanced progress quality description
+  const getEnhancedProgressQualityDescription = (
+    metrics: ConversationMetrics, 
+    progressIncrease: number,
+    userBehavior: any
+  ): string => {
+    if (progressIncrease >= 15) return "Transcendent soul connection";
+    if (progressIncrease >= 12) return "Profound emotional bond";
+    if (progressIncrease >= 10) return "Deep emotional connection";
+    if (progressIncrease >= 7) return "Meaningful conversation";
+    if (progressIncrease >= 5) return "Great interaction";
+    if (progressIncrease >= 3) return "Good conversation";
+    return "Gentle connection";
+  };
+
+  // Generate conversation suggestions
+  const getConversationSuggestions = (): string[] => {
+    if (!userMemory) return [];
+    
+    const context: RelationshipContext = {
+      currentStage: userMemory.relationshipStage,
+      stageStartDate: new Date(userMemory.relationshipStartDate),
+      totalMessages: messages.length,
+      conversationFrequency: 1.0,
+      personalityCompatibility: botbaeConfig ? calculatePersonalityCompatibility(botbaeConfig) : 50
+    };
+
+    return RelationshipProgressionService.generateConversationStarters(context);
+  };
+
+  // Check stage readiness with intelligent requirements
+  const checkStageReadiness = () => {
+    if (!userMemory) return { isReady: false, requiredMilestones: [], missingRequirements: [] };
+    
+    const context: RelationshipContext = {
+      currentStage: userMemory.relationshipStage,
+      stageStartDate: new Date(userMemory.relationshipStartDate),
+      totalMessages: messages.length,
+      conversationFrequency: 1.0,
+      personalityCompatibility: botbaeConfig ? calculatePersonalityCompatibility(botbaeConfig) : 50
+    };
+
+    return RelationshipProgressionService.calculateStageReadiness(
+      relationshipProgress, 
+      context, 
+      recentMilestones
+    );
+  };
 
   // Fetch botbae configuration
   useEffect(() => {
@@ -166,9 +320,13 @@ export function useBotbaeData() {
             relationshipStage: memoryData.relationship_stage,
             relationshipMilestones: (memoryData.relationship_milestones as any[]) || [],
             relationshipStartDate: memoryData.relationship_start_date,
+            relationshipProgress: (memoryData as any).relationship_progress || 25, // Handle new field
             preferences: (memoryData.preferences as Record<string, any>) || {},
             goals: (memoryData.goals as any[]) || [],
           });
+          
+          // Set initial progress from database
+          setRelationshipProgress((memoryData as any).relationship_progress || 25);
         }
         
         // Fetch recent messages (last 50)
@@ -355,5 +513,9 @@ export function useBotbaeData() {
     updateBotbaeConfig,
     updateRelationshipStage,
     saveMessage,
+    updateRelationshipProgressIntelligent,
+    getConversationSuggestions,
+    checkStageReadiness,
+    recentMilestones,
   };
 }

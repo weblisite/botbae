@@ -6,6 +6,7 @@ import { DashboardSidebar } from "@/components/dashboard/Sidebar";
 import { ChatInterface } from "@/components/dashboard/ChatInterface";
 import { CompanionCard } from "@/components/dashboard/CompanionCard";
 import { CustomizationForm } from "@/components/dashboard/CustomizationForm";
+import { MilestoneDisplay } from "@/components/relationship/MilestoneDisplay";
 import { MessageLimitModal } from "@/components/subscription/MessageLimitModal";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle } from "lucide-react";
@@ -36,7 +37,11 @@ function MainComponent() {
     setMessages,
     updateBotbaeConfig,
     updateRelationshipStage,
-    saveMessage
+    saveMessage,
+    updateRelationshipProgressIntelligent,
+    getConversationSuggestions,
+    checkStageReadiness,
+    recentMilestones
   } = useBotbaeData();
   
   const {
@@ -91,14 +96,18 @@ function MainComponent() {
       return;
     }
     
-    // Check message limits for free users
+    // Check message limits for free and pro users
     if (!limitData.canSendMessage) {
       setShowMessageLimitModal(true);
-      toast.error("You've reached your message limit. Please upgrade to continue!");
+      if (limitData.subscriptionStatus === 'free') {
+        toast.error("You've reached your free message limit. Please upgrade to continue!");
+      } else if (limitData.subscriptionStatus === 'pro') {
+        toast.error("You've reached your Pro plan limit (1000 messages). Upgrade to Elite for unlimited!");
+      }
       return;
     }
     
-    // Increment message count for free users
+    // Increment message count
     const canProceed = await incrementMessageCount();
     if (!canProceed) {
       setShowMessageLimitModal(true);
@@ -106,7 +115,7 @@ function MainComponent() {
     }
     
     // Check if this message will hit the limit and show modal after response
-    if (limitData.subscriptionStatus === 'free' && limitData.messagesRemaining === 1) {
+    if ((limitData.subscriptionStatus === 'free' || limitData.subscriptionStatus === 'pro') && limitData.messagesRemaining === 1) {
       // This is the last message, show modal after the bot responds
       setTimeout(() => {
         setShowMessageLimitModal(true);
@@ -130,11 +139,15 @@ function MainComponent() {
     setStreamingMessage("");
     
     try {
-      // Call our AI endpoint
+      // Call our AI endpoint with relationship-aware context
       const response = await supabase.functions.invoke('ai-chat', {
         body: {
           message: text,
-          userMemory,
+          userMemory: {
+            ...userMemory,
+            relationshipProgress: relationshipProgress,
+            milestones: recentMilestones
+          },
           botbaeConfig,
           messages: messages.slice(-10).map(m => ({
             sender: m.sender,
@@ -173,8 +186,8 @@ function MainComponent() {
       // Save bot message to database
       await saveMessage(botMessage);
       
-      // Update relationship progress a bit (simulate progress over time)
-      setRelationshipProgress(prev => Math.min(prev + 3, 100));
+      // Update relationship progress with intelligent analysis
+      updateRelationshipProgressIntelligent(text, botMessage.text);
     } catch (error) {
       console.error('Error getting AI response:', error);
       toast.error("Failed to get response. Please try again.");
@@ -184,8 +197,14 @@ function MainComponent() {
 
   // Handle progression to next relationship stage
   const handleDeepenBond = () => {
-    if (relationshipProgress < 100) {
-      toast.info("Continue interacting to build your relationship. You're making progress!");
+    const stageReadiness = checkStageReadiness();
+    
+    if (!stageReadiness.isReady) {
+      if (relationshipProgress < 100) {
+        toast.info("Continue interacting to build your relationship. You're making progress!");
+      } else if (stageReadiness.missingRequirements.length > 0) {
+        toast.info(`To advance, you need: ${stageReadiness.missingRequirements.join(", ")} milestones.`);
+      }
       return;
     }
     
@@ -256,20 +275,24 @@ function MainComponent() {
           relationshipStage={userMemory.relationshipStage}
         />
         
-        {/* Message Counter for Free Users */}
-        {limitData.subscriptionStatus === 'free' && (
+        {/* Message Counter for Free and Pro Users */}
+        {(limitData.subscriptionStatus === 'free' || limitData.subscriptionStatus === 'pro') && (
           <div className="px-4 md:px-6 pb-2">
             <div className="flex justify-center items-center gap-3">
               <Badge 
-                variant={limitData.messagesRemaining <= 1 ? "destructive" : "secondary"}
+                variant={limitData.messagesRemaining <= 1 ? "destructive" : 
+                        limitData.subscriptionStatus === 'pro' && limitData.messagesRemaining <= 50 ? "secondary" : 
+                        "outline"}
                 className="flex items-center gap-2"
               >
                 <MessageCircle className="w-4 h-4" />
                 {limitData.subscriptionStatus === 'free' 
                   ? `${limitData.messagesUsed}/${limitData.messageLimit} free messages used`
-                  : limitData.messagesRemaining === Infinity 
-                    ? `${limitData.messagesUsed} messages sent (unlimited)`
-                    : `${limitData.messagesUsed}/${limitData.messageLimit} messages used`
+                  : limitData.subscriptionStatus === 'pro'
+                    ? `${limitData.messagesUsed}/1,000 Pro messages used`
+                    : limitData.messagesRemaining === Infinity 
+                      ? `${limitData.messagesUsed} messages sent (unlimited)`
+                      : `${limitData.messagesUsed}/${limitData.messageLimit} messages used`
                 }
                 {limitData.messagesRemaining > 0 && limitData.messagesRemaining !== Infinity && (
                   <span className="text-xs">({limitData.messagesRemaining} remaining)</span>
@@ -301,14 +324,31 @@ function MainComponent() {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
               {/* Left column - companion info */}
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 space-y-6">
                 <CompanionCard
                   botbaeConfig={botbaeConfig}
                   relationshipStage={userMemory.relationshipStage}
                   relationshipProgress={relationshipProgress}
                   onCustomizeClick={() => setCustomizeView(true)}
                   onDeepenBond={handleDeepenBond}
+                  conversationSuggestions={getConversationSuggestions()}
+                  onSuggestionClick={(suggestion) => {
+                    // Auto-fill the chat input with the suggestion
+                    const chatInput = document.querySelector('input[placeholder*="Message"]') as HTMLInputElement;
+                    if (chatInput) {
+                      chatInput.value = suggestion;
+                      chatInput.focus();
+                    }
+                  }}
                 />
+                
+                {/* Milestones Display */}
+                {recentMilestones.length > 0 && (
+                  <MilestoneDisplay
+                    milestones={recentMilestones}
+                    companionName={botbaeConfig.name}
+                  />
+                )}
               </div>
               
               {/* Right column - chat */}
@@ -365,6 +405,7 @@ function MainComponent() {
         messagesUsed={limitData.messagesUsed}
         messageLimit={limitData.messageLimit}
         companionName={botbaeConfig.name}
+        subscriptionStatus={limitData.subscriptionStatus}
         onUpgradeSuccess={() => {
           // Refresh the limits data after successful upgrade
           window.location.reload();

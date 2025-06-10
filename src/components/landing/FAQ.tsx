@@ -1,4 +1,3 @@
-
 import {
   Accordion,
   AccordionContent,
@@ -29,7 +28,7 @@ const faqItems = [
   },
   {
     question: "What subscription plans are available?",
-    answer: "We offer three tiers: Basic (limited messages per day), Pro (unlimited messages, advanced customization, avatar uploads), and Elite (all Pro features plus multiple companions and priority support)."
+    answer: "We offer three tiers: Basic (10 free messages), Pro (1,000 messages per month, advanced customization, avatar uploads), and Elite (unlimited messages, all Pro features plus multiple companions and priority support)."
   },
   {
     question: "How does Botbae handle sensitive or intimate conversations?",
