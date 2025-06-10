@@ -101,10 +101,22 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
     setLoading(plan.id);
 
     try {
-      // For development - use mock checkout with actual database updates
-      if (import.meta.env.DEV) {
+      // Check if we're in development mode OR missing essential environment variables
+      const hasRequiredEnvVars = import.meta.env.VITE_POLAR_ACCESS_TOKEN && 
+                                  POLAR_PRODUCT_PRICES[plan.id as keyof typeof POLAR_PRODUCT_PRICES];
+      
+      const isDevelopmentMode = import.meta.env.DEV || !hasRequiredEnvVars;
+      
+      // For development OR when env vars are missing - use mock checkout with actual database updates
+      if (isDevelopmentMode) {
+        console.log('Using mock checkout mode:', { 
+          isDev: import.meta.env.DEV, 
+          hasEnvVars: hasRequiredEnvVars,
+          reason: !hasRequiredEnvVars ? 'Missing environment variables' : 'Development mode'
+        });
+        
         const mockCheckout = await createMockCheckout(plan.id, user.email || 'user@example.com');
-        toast.success(`Mock checkout created for ${plan.name}!`);
+        toast.success(`Mock checkout created for ${plan.name}! This is a development/demo mode.`);
         console.log('Mock Polar checkout:', mockCheckout);
         
         // Simulate successful subscription with actual database update
@@ -150,7 +162,13 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
       const productPriceId = POLAR_PRODUCT_PRICES[plan.id as keyof typeof POLAR_PRODUCT_PRICES];
       
       if (!productPriceId) {
-        throw new Error(`No product price ID configured for plan: ${plan.id}`);
+        console.error('Missing product price ID for plan:', plan.id, 'Available price IDs:', POLAR_PRODUCT_PRICES);
+        throw new Error(`No product price ID configured for plan: ${plan.id}. Please contact support.`);
+      }
+
+      if (!import.meta.env.VITE_POLAR_ACCESS_TOKEN) {
+        console.error('Missing Polar access token');
+        throw new Error('Payment system not configured. Please contact support.');
       }
 
       // Call Polar API directly (in production, this should be done server-side)
@@ -165,6 +183,8 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
         },
       };
 
+      console.log('Creating Polar checkout with data:', { ...checkoutData, customer_email: '***' });
+
       const response = await fetch('https://api.polar.sh/v1/checkouts/custom', {
         method: 'POST',
         headers: {
@@ -175,17 +195,24 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create checkout session');
+        const errorText = await response.text();
+        console.error('Polar API error:', response.status, errorText);
+        throw new Error(`Failed to create checkout session: ${response.status} - ${errorText}`);
       }
 
       const { url: checkoutUrl } = await response.json();
+      
+      if (!checkoutUrl) {
+        throw new Error('No checkout URL received from Polar');
+      }
       
       // Redirect to Polar checkout
       window.location.href = checkoutUrl;
       
     } catch (error) {
       console.error('Polar checkout error:', error);
-      toast.error("Failed to initiate checkout. Please try again.");
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error(`Failed to initiate checkout: ${errorMessage}`);
     } finally {
       setLoading(null);
     }
@@ -206,6 +233,18 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
         <CardDescription>
           Choose the plan that works best for you. Powered by Polar.
         </CardDescription>
+        
+        {/* Development/Demo Mode Notice */}
+        {(!import.meta.env.VITE_POLAR_ACCESS_TOKEN || !POLAR_PRODUCT_PRICES.pro || !POLAR_PRODUCT_PRICES.elite) && (
+          <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+            <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 text-sm font-medium">
+              <span>⚠️ Demo Mode</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Payment system is in demo mode. Upgrades will simulate successful payments for testing purposes.
+            </p>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         {/* Current subscription status */}
