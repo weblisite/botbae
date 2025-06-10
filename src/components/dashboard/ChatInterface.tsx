@@ -109,10 +109,10 @@ export function ChatInterface({
             )}
             
             <div className={cn(
-              "max-w-[70%] space-y-1",
+              "max-w-[70%] md:max-w-[80%] space-y-1",
               message.sender === "user" 
-                ? "bg-botbae-accent text-white rounded-2xl rounded-br-sm px-4 py-3" 
-                : "bg-muted rounded-2xl rounded-bl-sm px-4 py-3"
+                ? "bg-botbae-accent text-white rounded-2xl rounded-br-sm px-3 md:px-4 py-2 md:py-3" 
+                : "bg-muted rounded-2xl rounded-bl-sm px-3 md:px-4 py-2 md:py-3"
             )}>
               {message.sender === "bot" && (
                 <p className="text-xs font-medium text-botbae-accent">
@@ -173,7 +173,7 @@ export function ChatInterface({
               )}
             </div>
             
-            <div className="max-w-[70%] bg-muted rounded-2xl rounded-bl-sm px-4 py-3 space-y-1">
+            <div className="max-w-[70%] md:max-w-[80%] bg-muted rounded-2xl rounded-bl-sm px-3 md:px-4 py-2 md:py-3 space-y-1">
               <p className="text-xs font-medium text-botbae-accent">
                 {botName}
               </p>
@@ -191,14 +191,14 @@ export function ChatInterface({
       {/* Message input */}
       <form
         onSubmit={onSendMessage}
-        className="border-t border-muted p-4 bg-card"
+        className="border-t border-muted p-3 md:p-4 bg-card"
       >
         <div className="flex gap-2">
           <Textarea
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder={`Message ${botName}...`}
-            className="botbae-input min-h-12 resize-none"
+            className="botbae-input min-h-11 md:min-h-12 resize-none text-sm md:text-base"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -210,9 +210,9 @@ export function ChatInterface({
           <Button
             type="submit"
             disabled={!newMessage.trim()}
-            className="botbae-button"
+            className="botbae-button shrink-0 h-11 w-11 md:h-12 md:w-12 p-0"
           >
-            <SendHorizontal size={20} />
+            <SendHorizontal className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
         </div>
       </form>

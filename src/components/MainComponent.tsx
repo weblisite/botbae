@@ -23,6 +23,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useBotbaeData } from "@/hooks/useBotbaeData";
 import { useMessageLimits } from "@/hooks/useMessageLimits";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 
 function MainComponent() {
   const isMobile = useIsMobile();
@@ -257,7 +258,7 @@ function MainComponent() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden mobile-no-scroll-x">
       {/* Sidebar */}
       <DashboardSidebar
         isMobile={isMobile}
@@ -267,7 +268,10 @@ function MainComponent() {
       />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+      <div className={cn(
+        "flex-1 flex flex-col h-screen overflow-hidden",
+        isMobile ? "w-full mobile-full-width" : ""
+      )}>
         <DashboardHeader
           isMobile={isMobile}
           showSidebar={showSidebar}
@@ -322,9 +326,15 @@ function MainComponent() {
               onCancel={() => setCustomizeView(false)}
             />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+            <div className={cn(
+              "grid gap-4 md:gap-6 h-full",
+              isMobile ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-3"
+            )}>
               {/* Left column - companion info */}
-              <div className="lg:col-span-1 space-y-6">
+              <div className={cn(
+                "space-y-4 md:space-y-6",
+                isMobile ? "order-2" : "lg:col-span-1"
+              )}>
                 <CompanionCard
                   botbaeConfig={botbaeConfig}
                   relationshipStage={userMemory.relationshipStage}
@@ -334,7 +344,7 @@ function MainComponent() {
                   conversationSuggestions={getConversationSuggestions()}
                   onSuggestionClick={(suggestion) => {
                     // Auto-fill the chat input with the suggestion
-                    const chatInput = document.querySelector('input[placeholder*="Message"]') as HTMLInputElement;
+                    const chatInput = document.querySelector('textarea[placeholder*="Message"]') as HTMLTextAreaElement;
                     if (chatInput) {
                       chatInput.value = suggestion;
                       chatInput.focus();
@@ -352,7 +362,12 @@ function MainComponent() {
               </div>
               
               {/* Right column - chat */}
-              <div className="lg:col-span-2 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)] botbae-glass">
+              <div className={cn(
+                "botbae-glass",
+                isMobile 
+                  ? "order-1 h-[calc(100vh-140px)]" 
+                  : "lg:col-span-2 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]"
+              )}>
                 <ChatInterface
                   messages={messages}
                   setMessages={setMessages}
