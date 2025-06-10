@@ -23,7 +23,16 @@ export function DashboardHeader({
   relationshipStage,
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-50 h-16 border-b border-muted flex items-center px-4 justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header 
+      className="sticky-header sticky top-0 z-[100] h-16 border-b border-muted flex items-center px-4 justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shrink-0"
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        WebkitBackdropFilter: 'blur(8px)',
+        backdropFilter: 'blur(8px)'
+      }}
+    >
       <div className="flex items-center gap-4">
           <Button
             variant="ghost"

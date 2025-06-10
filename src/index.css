@@ -52,10 +52,17 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    height: 100%;
+  }
+
   body {
     @apply bg-botbae-background text-foreground font-poppins;
     background-image: linear-gradient(to bottom right, #1a1a2e, #16213e);
     min-height: 100vh;
+    height: 100%;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -83,6 +90,16 @@
 
   .botbae-glass {
     @apply bg-card/70 backdrop-blur-sm border border-muted rounded-lg;
+  }
+
+  /* Enhanced sticky header for mobile */
+  .sticky-header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 }
 
