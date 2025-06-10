@@ -1,15 +1,22 @@
 import { useTheme } from "next-themes"
+import { useLocation } from "react-router-dom"
 import { Toaster as Sonner, toast } from "sonner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
+  const location = useLocation()
+  
+  // Check if we're on a dashboard page
+  const isDashboardPage = location.pathname.startsWith('/dashboard') || location.pathname === '/onboarding'
 
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
+      position={isDashboardPage ? "top-center" : "bottom-center"}
+      offset={isDashboardPage ? 72 : undefined} // Account for sticky header height
       toastOptions={{
         classNames: {
           toast:
