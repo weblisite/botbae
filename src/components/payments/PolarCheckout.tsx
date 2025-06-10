@@ -200,7 +200,7 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
   const currentPlan = getCurrentPlan();
 
   return (
-    <Card>
+    <Card className="botbae-card" data-component="polar-checkout">
       <CardHeader>
         <CardTitle>Subscription Plans</CardTitle>
         <CardDescription>
@@ -210,10 +210,10 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
       <CardContent>
         {/* Current subscription status */}
         {profile?.is_premium ? (
-          <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg mb-6">
+          <div className="p-4 bg-card/70 backdrop-blur-sm border border-border rounded-lg mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-medium">Current Plan:</span>
-              <Badge className="bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
+              <span className="font-medium text-foreground">Current Plan:</span>
+              <Badge className="bg-botbae-accent/20 text-botbae-accent border-botbae-accent/30">
                 {profile.subscription_plan || "Premium"}
               </Badge>
             </div>
@@ -222,10 +222,10 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
             </p>
           </div>
         ) : (
-          <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg mb-6">
+          <div className="p-4 bg-card/70 backdrop-blur-sm border border-border rounded-lg mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-medium">Current Plan:</span>
-              <Badge variant="outline" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100">
+              <span className="font-medium text-foreground">Current Plan:</span>
+              <Badge variant="outline" className="bg-muted text-muted-foreground border-border">
                 Free
               </Badge>
             </div>
@@ -244,19 +244,19 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
             return (
               <Card 
                 key={plan.id} 
-                className={`relative ${
-                  isCurrentPlan ? 'border-2 border-green-500' : ''
-                } ${isPopular ? 'border-2 border-blue-500' : ''}`}
+                className={`relative botbae-glass ${
+                  isCurrentPlan ? 'border-2 border-botbae-accent' : ''
+                } ${isPopular ? 'border-2 border-botbae-secondary' : ''}`}
               >
                 {isPopular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-blue-500 text-white">Most Popular</Badge>
+                    <Badge className="bg-botbae-secondary text-white">Most Popular</Badge>
                   </div>
                 )}
                 
                 <CardHeader className="text-center pb-2">
-                  <CardTitle className="text-xl">{plan.name}</CardTitle>
-                  <div className="text-3xl font-bold">
+                  <CardTitle className="text-xl text-foreground">{plan.name}</CardTitle>
+                  <div className="text-3xl font-bold text-foreground">
                     {formatPrice(plan.price, plan.currency)}
                     {plan.price > 0 && (
                       <span className="text-sm font-normal text-muted-foreground">
@@ -270,8 +270,8 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
                   <ul className="space-y-3">
                     {plan.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-2">
-                        <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
+                        <Check className="w-4 h-4 text-botbae-accent mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-foreground">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -279,8 +279,8 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
                 
                 <CardFooter>
                   <Button 
-                    className={`w-full ${isPopular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
-                    variant={isCurrentPlan ? "outline" : "default"}
+                    className={`w-full ${isPopular ? 'botbae-button' : ''}`}
+                    variant={isCurrentPlan ? "outline" : isPopular ? "default" : "outline"}
                     disabled={isCurrentPlan || loading === plan.id}
                     onClick={() => handlePolarCheckout(plan)}
                   >
@@ -311,7 +311,7 @@ export function PolarCheckout({ profile }: PolarCheckoutProps) {
               href="https://polar.sh" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
+              className="text-botbae-accent hover:underline"
             >
               Polar
             </a>

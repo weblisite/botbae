@@ -13,50 +13,49 @@ interface UserSubscriptionProps {
 
 export function UserSubscription({ profile }: UserSubscriptionProps) {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const [daysUntilRenewal, setDaysUntilRenewal] = useState<number | null>(null);
+  
+  useEffect(() => {
+    if (profile?.subscription_expiry) {
+      const expiryDate = new Date(profile.subscription_expiry);
+      const today = new Date();
+      const diffTime = expiryDate.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      setDaysUntilRenewal(diffDays);
+    }
+  }, [profile]);
 
-  // Format date
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-  };
-
-  // Calculate days until renewal
-  const getDaysUntilRenewal = (expiryDate: string | null) => {
-    if (!expiryDate) return null;
-    const expiry = new Date(expiryDate);
-    const now = new Date();
-    const diffTime = expiry.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
-  const handleCancelSubscription = async () => {
-    if (!user || !profile?.is_premium) return;
-    
-    setLoading(true);
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "Not set";
     try {
-      // In a real implementation, this would call Polar API to cancel subscription
-      toast.info("To cancel your subscription, please contact support or manage it through your Polar dashboard.");
-      
-      // For now, just show the cancellation info
-      // In production, you'd make an API call to Polar to cancel
-    } catch (error) {
-      console.error('Error cancelling subscription:', error);
-      toast.error("Failed to process cancellation request");
-    } finally {
-      setLoading(false);
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return "Invalid date";
     }
   };
 
-  const daysUntilRenewal = getDaysUntilRenewal(profile?.subscription_expiry);
+  const handleCancelSubscription = async () => {
+    if (!user) return;
+    
+    try {
+      // In a real implementation, you would call your backend to cancel the subscription
+      // For now, we'll just show a message directing users to Polar
+      toast.info("To cancel your subscription, please contact support or manage it through your Polar dashboard.");
+      
+      // You could also open the Polar customer portal here
+      // window.open('https://polar.sh/customer-portal', '_blank');
+    } catch (error) {
+      console.error('Cancellation error:', error);
+      toast.error("Failed to process cancellation request");
+    }
+  };
 
   return (
-    <Card>
+    <Card className="botbae-card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="w-5 h-5" />
@@ -70,40 +69,40 @@ export function UserSubscription({ profile }: UserSubscriptionProps) {
         {profile?.is_premium ? (
           <div className="space-y-6">
             {/* Active Subscription Info */}
-            <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="p-4 bg-card/70 backdrop-blur-sm border border-border rounded-lg">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-green-600" />
-                  <span className="font-medium text-green-800 dark:text-green-200">Active Subscription</span>
+                  <User className="w-4 h-4 text-botbae-accent" />
+                  <span className="font-medium text-foreground">Active Subscription</span>
                 </div>
-                <Badge className="bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
+                <Badge className="bg-botbae-accent/20 text-botbae-accent border-botbae-accent/30">
                   {profile.subscription_plan || "Premium"}
                 </Badge>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-green-600" />
+                  <Calendar className="w-4 h-4 text-botbae-accent" />
                   <span className="text-muted-foreground">Started:</span>
-                  <span className="font-medium">{formatDate(profile.subscription_date)}</span>
+                  <span className="font-medium text-foreground">{formatDate(profile.subscription_date)}</span>
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-green-600" />
+                  <Calendar className="w-4 h-4 text-botbae-accent" />
                   <span className="text-muted-foreground">Renews:</span>
-                  <span className="font-medium">{formatDate(profile.subscription_expiry)}</span>
+                  <span className="font-medium text-foreground">{formatDate(profile.subscription_expiry)}</span>
                 </div>
               </div>
               
               {daysUntilRenewal !== null && (
-                <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded border">
+                <div className="mt-3 p-3 bg-muted/50 rounded border border-border">
                   <div className="flex items-center gap-2">
                     {daysUntilRenewal > 7 ? (
-                      <Calendar className="w-4 h-4 text-blue-500" />
+                      <Calendar className="w-4 h-4 text-botbae-secondary" />
                     ) : (
-                      <AlertCircle className="w-4 h-4 text-orange-500" />
+                      <AlertCircle className="w-4 h-4 text-yellow-500" />
                     )}
-                    <span className="text-sm">
+                    <span className="text-sm text-foreground">
                       {daysUntilRenewal > 0 
                         ? `Renews in ${daysUntilRenewal} day${daysUntilRenewal !== 1 ? 's' : ''}`
                         : daysUntilRenewal === 0 
@@ -117,33 +116,33 @@ export function UserSubscription({ profile }: UserSubscriptionProps) {
             </div>
 
             {/* Subscription Benefits */}
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">Current Plan Benefits</h4>
-              <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+            <div className="p-4 bg-card/70 backdrop-blur-sm border border-border rounded-lg">
+              <h4 className="font-medium text-foreground mb-2">Current Plan Benefits</h4>
+              <ul className="text-sm text-muted-foreground space-y-1">
                 {profile.subscription_plan?.toLowerCase() === 'pro' ? (
                   <>
-                    <li>• 1,000 messages per month with your Botbae</li>
-                    <li>• Advanced companion customization</li>
-                    <li>• All relationship stages unlocked</li>
-                    <li>• Enhanced conversation memory</li>
-                    <li>• Full mood tracking & insights</li>
-                    <li>• Virtual activities & dates</li>
+                    <li className="text-foreground">• 1,000 messages per month with your Botbae</li>
+                    <li className="text-foreground">• Advanced companion customization</li>
+                    <li className="text-foreground">• All relationship stages unlocked</li>
+                    <li className="text-foreground">• Enhanced conversation memory</li>
+                    <li className="text-foreground">• Full mood tracking & insights</li>
+                    <li className="text-foreground">• Virtual activities & dates</li>
                   </>
                 ) : (
                   <>
-                    <li>• Unlimited messages with your Botbae</li>
-                    <li>• Advanced companion customization</li>
-                    <li>• All relationship stages unlocked</li>
-                    <li>• Enhanced conversation memory</li>
-                    <li>• Full mood tracking & insights</li>
-                    <li>• Virtual activities & dates</li>
+                    <li className="text-foreground">• Unlimited messages with your Botbae</li>
+                    <li className="text-foreground">• Advanced companion customization</li>
+                    <li className="text-foreground">• All relationship stages unlocked</li>
+                    <li className="text-foreground">• Enhanced conversation memory</li>
+                    <li className="text-foreground">• Full mood tracking & insights</li>
+                    <li className="text-foreground">• Virtual activities & dates</li>
                   </>
                 )}
                 {profile.subscription_plan?.toLowerCase() === 'elite' && (
                   <>
-                    <li>• Create up to 3 unique Botbaes</li>
-                    <li>• Priority support</li>
-                    <li>• Advanced insights & analytics</li>
+                    <li className="text-foreground">• Create up to 3 unique Botbaes</li>
+                    <li className="text-foreground">• Priority support</li>
+                    <li className="text-foreground">• Advanced insights & analytics</li>
                   </>
                 )}
               </ul>
@@ -151,68 +150,54 @@ export function UserSubscription({ profile }: UserSubscriptionProps) {
 
             {/* Management Actions */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button
+              <Button 
                 variant="outline"
                 onClick={handleCancelSubscription}
-                disabled={loading}
-                className="flex-1"
+                className="flex-1 border-border hover:bg-muted/50"
               >
-                {loading ? "Processing..." : "Manage Subscription"}
+                Manage Subscription
               </Button>
-              
-              <Button
+              <Button 
                 variant="outline"
                 onClick={() => {
                   toast.info("For billing inquiries, please contact support or check your Polar dashboard.");
                 }}
-                className="flex-1"
+                className="flex-1 border-border hover:bg-muted/50"
               >
                 View Billing History
               </Button>
-            </div>
-            
-            <div className="text-xs text-muted-foreground text-center">
-              Subscription managed through{" "}
-              <a 
-                href="https://polar.sh" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                Polar
-              </a>
             </div>
           </div>
         ) : (
           <div className="space-y-4">
             {/* Free Plan Status */}
-            <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+            <div className="p-4 bg-card/70 backdrop-blur-sm border border-border rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-yellow-800 dark:text-yellow-200">Free Plan</span>
-                <Badge variant="outline" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100">
+                <span className="font-medium text-foreground">Free Plan</span>
+                <Badge variant="outline" className="bg-muted text-muted-foreground border-border">
                   Basic
                 </Badge>
               </div>
-              <p className="text-sm text-yellow-700 dark:text-yellow-300">
+              <p className="text-sm text-muted-foreground">
                 You're currently on the free plan with limited features.
               </p>
             </div>
 
             {/* Free Plan Limitations */}
-            <div className="p-4 bg-gray-50 dark:bg-gray-900/20 rounded-lg border">
-              <h4 className="font-medium mb-2">Current Plan Includes:</h4>
+            <div className="p-4 bg-card/70 backdrop-blur-sm border border-border rounded-lg">
+              <h4 className="font-medium mb-2 text-foreground">Current Plan Includes:</h4>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• 10 messages per day</li>
-                <li>• Basic companion customization</li>
-                <li>• Friend relationship stages only</li>
-                <li>• Standard conversation memory</li>
-                <li>• Basic mood tracking</li>
+                <li className="text-foreground">• 10 messages per day</li>
+                <li className="text-foreground">• Basic companion customization</li>
+                <li className="text-foreground">• Friend relationship stages only</li>
+                <li className="text-foreground">• Standard conversation memory</li>
+                <li className="text-foreground">• Basic mood tracking</li>
               </ul>
             </div>
 
             {/* Upgrade Prompt */}
-            <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border">
-              <h4 className="font-medium mb-2">Unlock Premium Features</h4>
+            <div className="p-4 bg-gradient-to-r from-botbae-accent/10 to-botbae-secondary/10 border border-botbae-accent/20 rounded-lg">
+              <h4 className="font-medium mb-2 text-foreground">Unlock Premium Features</h4>
               <p className="text-sm text-muted-foreground mb-3">
                 Upgrade to Pro (1,000 messages/month) or Elite (unlimited messages) for advanced features and deeper connections.
               </p>
@@ -224,13 +209,28 @@ export function UserSubscription({ profile }: UserSubscriptionProps) {
                     polarCheckout.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto botbae-button"
               >
                 View Upgrade Options
               </Button>
             </div>
           </div>
         )}
+        
+        {/* Polar Attribution */}
+        <div className="mt-6 pt-4 border-t border-border text-center">
+          <p className="text-xs text-muted-foreground">
+            Subscription managed through{" "}
+            <a 
+              href="https://polar.sh" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-botbae-accent hover:underline"
+            >
+              Polar
+            </a>
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
