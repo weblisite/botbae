@@ -10,7 +10,7 @@ export default function Customize() {
   const isMobile = useIsMobile();
   const { botbaeConfig, updateBotbaeConfig, loading } = useBotbaeData();
   const { userMemory } = useBotbaeData();
-  const [showSidebar, setShowSidebar] = useState(!isMobile);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   // Show loading while data is being fetched
   if (loading) {

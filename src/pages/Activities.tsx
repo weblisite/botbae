@@ -25,7 +25,7 @@ export default function Activities() {
   const isMobile = useIsMobile();
   const { user } = useAuth();
   const { botbaeConfig, userMemory } = useBotbaeData();
-  const [showSidebar, setShowSidebar] = useState(!isMobile);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
   const [showActivityDialog, setShowActivityDialog] = useState(false);

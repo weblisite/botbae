@@ -23,7 +23,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useBotbaeData } from "@/hooks/useBotbaeData";
 import { useMessageLimits } from "@/hooks/useMessageLimits";
 import { supabase } from "@/integrations/supabase/client";
-import { cn } from "@/lib/utils";
 
 function MainComponent() {
   const isMobile = useIsMobile();
@@ -53,7 +52,7 @@ function MainComponent() {
     updateSubscriptionStatus
   } = useMessageLimits();
   
-  const [showSidebar, setShowSidebar] = useState(!isMobile);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [customizeView, setCustomizeView] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState("");
   const [showConsentDialog, setShowConsentDialog] = useState(false);
@@ -258,7 +257,7 @@ function MainComponent() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden mobile-no-scroll-x">
+    <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
       <DashboardSidebar
         isMobile={isMobile}
@@ -268,10 +267,7 @@ function MainComponent() {
       />
       
       {/* Main content */}
-      <div className={cn(
-        "flex-1 flex flex-col h-screen overflow-hidden",
-        isMobile ? "w-full mobile-full-width" : ""
-      )}>
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <DashboardHeader
           isMobile={isMobile}
           showSidebar={showSidebar}
@@ -326,15 +322,9 @@ function MainComponent() {
               onCancel={() => setCustomizeView(false)}
             />
           ) : (
-            <div className={cn(
-              "grid gap-4 md:gap-6 h-full",
-              isMobile ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-3"
-            )}>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
               {/* Left column - companion info */}
-              <div className={cn(
-                "space-y-4 md:space-y-6",
-                isMobile ? "order-2" : "lg:col-span-1"
-              )}>
+              <div className="lg:col-span-1 space-y-6">
                 <CompanionCard
                   botbaeConfig={botbaeConfig}
                   relationshipStage={userMemory.relationshipStage}
@@ -344,7 +334,7 @@ function MainComponent() {
                   conversationSuggestions={getConversationSuggestions()}
                   onSuggestionClick={(suggestion) => {
                     // Auto-fill the chat input with the suggestion
-                    const chatInput = document.querySelector('textarea[placeholder*="Message"]') as HTMLTextAreaElement;
+                    const chatInput = document.querySelector('input[placeholder*="Message"]') as HTMLInputElement;
                     if (chatInput) {
                       chatInput.value = suggestion;
                       chatInput.focus();
@@ -362,12 +352,7 @@ function MainComponent() {
               </div>
               
               {/* Right column - chat */}
-              <div className={cn(
-                "botbae-glass",
-                isMobile 
-                  ? "order-1 h-[calc(100vh-140px)]" 
-                  : "lg:col-span-2 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]"
-              )}>
+              <div className="lg:col-span-2 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)] botbae-glass">
                 <ChatInterface
                   messages={messages}
                   setMessages={setMessages}

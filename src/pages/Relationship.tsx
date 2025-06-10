@@ -23,8 +23,8 @@ interface Milestone {
 export default function Relationship() {
   const isMobile = useIsMobile();
   const { user } = useAuth();
-  const { userMemory, botbaeConfig, relationshipProgress, updateRelationshipStage } = useBotbaeData();
-  const [showSidebar, setShowSidebar] = useState(!isMobile);
+  const { botbaeConfig, userMemory, relationshipProgress, recentMilestones } = useBotbaeData();
+  const [showSidebar, setShowSidebar] = useState(false);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [showConsentDialog, setShowConsentDialog] = useState(false);
   const [nextRelationshipStage, setNextRelationshipStage] = useState("");

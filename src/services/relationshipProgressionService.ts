@@ -396,7 +396,7 @@ export class RelationshipProgressionService {
     // Use the enhanced personal indicators structure
     Object.values(this.PERSONAL_INDICATORS).forEach(indicators => {
       indicators.forEach(indicator => {
-        if (lowerMessage.includes(indicator)) score += 2;
+      if (lowerMessage.includes(indicator)) score += 2;
       });
     });
     

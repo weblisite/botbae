@@ -9,10 +9,10 @@ import { supabase } from "@/integrations/supabase/client";
 import SettingsForm from "@/components/settings/SettingsForm";
 
 export default function Settings() {
-  const { user, loading: authLoading } = useAuth();
-  const { userMemory, loading: dataLoading } = useBotbaeData();
   const isMobile = useIsMobile();
-  const [showSidebar, setShowSidebar] = useState(!isMobile);
+  const { user, signOut } = useAuth();
+  const { userMemory, loading: dataLoading } = useBotbaeData();
+  const [showSidebar, setShowSidebar] = useState(false);
   
   // Render immediately - SettingsForm will handle missing data gracefully
   return (

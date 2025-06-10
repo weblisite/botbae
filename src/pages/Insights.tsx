@@ -22,7 +22,7 @@ export default function Insights() {
   const isMobile = useIsMobile();
   const { user } = useAuth();
   const { botbaeConfig, userMemory } = useBotbaeData();
-  const [showSidebar, setShowSidebar] = useState(!isMobile);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [insights, setInsights] = useState<Insight | null>(null);
 
   // Mock data for charts
