@@ -38,6 +38,7 @@ interface CompanionCardProps {
   onCustomizeClick: () => void;
   onDeepenBond: () => void;
   hidePersonalityTraits?: boolean;
+  hasMessages?: boolean;
 }
 
 export function CompanionCard({
@@ -47,6 +48,7 @@ export function CompanionCard({
   onCustomizeClick,
   onDeepenBond,
   hidePersonalityTraits = false,
+  hasMessages = false,
 }: CompanionCardProps) {
   // Get relationship color based on stage
   const getRelationshipColor = () => {
@@ -188,7 +190,10 @@ export function CompanionCard({
             className="botbae-button"
             onClick={onDeepenBond}
           >
-            Deepen Our Bond
+            {hasMessages 
+              ? "Let's continue chatting to deepen our bond" 
+              : "Let's chat to build our bond"
+            }
           </Button>
         </div>
         <Progress value={relationshipProgress} className="h-2" />

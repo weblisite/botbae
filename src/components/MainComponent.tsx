@@ -324,6 +324,7 @@ function MainComponent() {
                     onCustomizeClick={() => setCustomizeView(true)}
                     onDeepenBond={handleDeepenBond}
                     hidePersonalityTraits={true}
+                    hasMessages={messages.length > 0}
                   />
                 )}
                 
