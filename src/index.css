@@ -254,18 +254,39 @@
 /* Responsive improvements */
 @media (max-width: 768px) {
   .botbae-container {
-    padding: 0 1rem;
+    @apply px-3;
   }
-  
+
   .botbae-button {
-    width: 100%;
-    padding: 1rem;
+    @apply py-2 px-4 text-sm;
+  }
+
+  /* Mobile sidebar optimizations */  
+  .mobile-sidebar {
+    max-width: calc(100vw - 2rem);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Prevent horizontal scroll when sidebar is open */
+  .sidebar-open {
+    overflow-x: hidden;
+  }
+
+  /* Ensure main content area doesn't cause horizontal scroll */
+  .main-content {
+    min-width: 0;
+  }
+
+  /* Improve touch targets on mobile */
+  .nav-item {
+    min-height: 44px;
   }
 }
 
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 /* Loading states */
